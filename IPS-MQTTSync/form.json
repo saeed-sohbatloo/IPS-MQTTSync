@@ -1,0 +1,36 @@
+{
+    "elements":
+    [
+      { "type": "ValidationTextBox", "name": "GroupTopic", "caption": "MQTT Topic" },
+      {
+        "type": "List",
+        "name": "Devices",
+        "caption": "Devices",
+        "rowCount": 5,
+        "add": true,
+        "delete": true,
+        "sort": {
+          "column": "ObjectID",
+          "direction": "ascending"
+        },
+        "columns": [{
+          "caption": "ObjectID",
+          "name": "ObjectID",
+          "width": "75px",
+          "add": 0,
+          "edit": {
+            "type": "SelectObject"
+          }
+        }, {
+          "caption": "MQTT Topic",
+          "name": "MQTTTopic",
+          "width": "auto",
+          "add": "",
+          "edit": {
+            "type": "ValidationTextBox"
+          }
+        }],
+        "values": []
+      }
+    ]
+}
