@@ -56,12 +56,12 @@ Beispiel Variante 2:
 
 Das Script erhält folgenden Inhalt:
 
-``
+```php
 $Payload['ID'] = 12345;
 $Payload['Name'] = 'Test Variable';
 $Payload['Value'] = 55;
 MQTTSync_sendData(41233,json_encode($Payload));  
-``
+```
 
 Wird nun das Script ausgeführt, wird in der Liste nach dem richtigen Topic gesucht und das Payload per MQTT gepusht.
 Das würde so aussehen:
