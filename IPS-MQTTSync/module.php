@@ -47,8 +47,6 @@ class IPS_MQTTSync extends IPSModule
                         $this->SendDebug(__FUNCTION__, 'Script',0);
                         break;
                 }
-
-                IPS_LogMessage(__FUNCTION__, print_r($Instanz,true));
             }
         }
     }
@@ -85,7 +83,7 @@ class IPS_MQTTSync extends IPSModule
 
                 if ($Instanz <> NULL) {
                     $Payload = json_encode($Instanz);
-                    $this->SendData($Topic,$Payload);
+                    $this->SendMQTTData($Topic,$Payload);
                 }
         }
     }
@@ -118,7 +116,7 @@ class IPS_MQTTSync extends IPSModule
         }
     }
 
-    private function SendData(string $topic, string $payload) {
+    private function SendMQTTData(string $topic, string $payload) {
 
         $GroupTopic = $this->ReadPropertyString('GroupTopic');
 
@@ -167,12 +165,10 @@ class IPS_MQTTSync extends IPSModule
         $this->SendDebug(__FUNCTION__, 'Topic '.$Topic .' is not on list!',0);
         return 0;
     }
-public function sendDataFromScript(string $Payload) {
-        IPS_LogMessage(__FUNCTION__,print_r($_IPS,true));
-
+public function sendData(string $Payload) {
         $Topic = $this->TopicFromList($_IPS['SELF']);
         if ($Topic <> '') {
-            $this->SendData($Topic, $Payload);
+            $this->SendMQTTData($Topic, $Payload);
             return true;
         }
         return false;
