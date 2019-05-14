@@ -20,6 +20,9 @@ class IPS_MQTTSync extends IPSModule
         parent::ApplyChanges();
         $this->ConnectParent('{C6D2AEB3-6E1F-4B2E-8E69-3A1A00246850}');
 
+        $MQTTTopic = $this->ReadPropertyString('GroupTopic');
+        $this->SetReceiveDataFilter('.*mqttsync/'.$MQTTTopic . '.*');
+
         $DevicesJSON = $this->ReadPropertyString('Devices');
         if ($DevicesJSON != '') {
             $Devices = json_decode($DevicesJSON);
@@ -56,58 +59,67 @@ class IPS_MQTTSync extends IPSModule
             case VM_UPDATE:
 
                 $Topic = '';
-                $Instanz = [];
-                $VObject = IPS_GetObject($SenderID);
-                $PObject = IPS_GetObject($VObject['ParentID']);
-                $DevicesJSON = $this->ReadPropertyString('Devices');
-                if ($DevicesJSON != '') {
-                    $Devices = json_decode($DevicesJSON);
-                    foreach ($Devices as $Device) {
-                        if ($Device->ObjectID == $VObject['ParentID']) {
-                            $Topic = $Device->MQTTTopic;
-                        } else {
-                            $this->SendDebug(__FUNCTION__,'No Topic for '. $VObject['ParentID'],0);
-                        }
-                    }
-                }
+                $Instanz = NULL;
+                $Object = IPS_GetObject($SenderID);
 
-                $i = 0;
-                if ($Topic <> '') {
+                if ($this->isInstance($SenderID)) {
+                    $Topic = $this->TopicFromList($Object['ParentID']);
+                    $PObject = IPS_GetObject($Object['ParentID']);
+
+                    $i = 0;
                     foreach ($PObject['ChildrenIDs'] as $Children) {
                         if (IPS_VariableExists($Children)) {
                             $tmpObject = IPS_GetObject($Children);
                             $Instanz[$i]['ID'] = $tmpObject['ObjectID'];
-                            $Instanz[$i]['Name'] =  $tmpObject['ObjectName'];
+                            $Instanz[$i]['Name'] = $tmpObject['ObjectName'];
                             $Instanz[$i]['Value'] = GetValue($tmpObject['ObjectID']);
                             $i++;
                         }
                     }
                 } else {
-                    $Devices = json_decode($DevicesJSON);
-                    foreach ($Devices as $Device) {
-                        if ($Device->ObjectID == $VObject['ObjectID']) {
-                            $Topic = $Device->MQTTTopic;
-                        } else {
-                            $this->SendDebug(__FUNCTION__,'No Topic for '. $VObject['ParentID'],0);
-                        }
-                    }
-                    $Instanz[$i]['ID'] = $VObject['ObjectID'];
-                    $Instanz[$i]['Name'] =  $VObject['ObjectName'];
-                    $Instanz[$i]['Value'] = GetValue($VObject['ObjectID']);
+                    $Topic = $this->TopicFromList($Object['ObjectID']);
+                    $Instanz[0]['ID'] = $Object['ObjectID'];
+                    $Instanz[0]['Name'] =  $Object['ObjectName'];
+                    $Instanz[0]['Value'] = GetValue($Object['ObjectID']);
                 }
 
-                $Payload = json_encode($Instanz);
+                if ($Instanz <> NULL) {
+                    $Payload = json_encode($Instanz);
 
-                $GroupTopic = $this->ReadPropertyString('GroupTopic');
-                $Topic = $GroupTopic.'/'.$Topic;
+                    $GroupTopic = $this->ReadPropertyString('GroupTopic');
+                    $Topic = $GroupTopic.'/'.$Topic;
 
-                $this->SendData($Topic,$Payload);
-
-                IPS_LogMessage('VM_UPDATE',print_r($Instanz,true));
-                IPS_LogMessage('VM_UPDATE',$SenderID. ' '. $Data[0]);
+                    $this->SendData($Topic,$Payload);
+                }
         }
-            //GetKernel()->PostMessage(VariableID, VM_UPDATE, VariableValue, HasDiff, OldValue, (int)Time, (int)OldUpdated, (int)OldChanged);
-        //IPS_LogMessage("MessageSink", "Message from SenderID ".$SenderID." with Message ".$Message."\r\n Data: ".print_r($Data, true));
+    }
+
+    public function ReceiveData($JSONString)
+    {
+        $this->SendDebug('ReceiveData JSON', $JSONString, 0);
+        $Data = json_decode($JSONString);
+
+        if (property_exists($Data, 'Topic')) {
+            $Topic = explode('/',$Data->Topic);
+            $Topic = $Topic[array_key_last($Topic)];
+
+            $this->SendDebug(__FUNCTION__.' Topic',$Topic ,0);
+            $ObjectID = $this->isTopicFromList($Topic);
+            if ($ObjectID <> 0) {
+                $this->SendDebug(__FUNCTION__ . 'Topic exists on list', $Data->Topic, 0);
+                $Object = IPS_GetObject($ObjectID);
+                switch ($Object['ObjectType']) {
+                    case 3:
+                        if ($Data->Payload == '') {
+                            IPS_RunScript($ObjectID);
+                        }
+                        break;
+                    default:
+                        $this->SendDebug(__FUNCTION__ . 'No Action for ObjectType', $Object['ObjectType'], 0);
+                        break;
+                }
+            }
+        }
     }
 
     private function SendData(string $topic, string $payload) {
@@ -122,5 +134,36 @@ class IPS_MQTTSync extends IPSModule
         $this->SendDebug(__FUNCTION__ . 'Topic', $Data['Topic'], 0);
         $this->SendDebug(__FUNCTION__, $DataJSON, 0);
         $this->SendDataToParent($DataJSON);
+    }
+
+    private function isInstance($ObjectID) {
+        $Object = IPS_GetObject($ObjectID);
+
+        if ($this->TopicFromList($Object['ParentID']) <> '') {
+            return true;
+        }
+        return false;
+    }
+
+    private function TopicFromList($ObjectID) {
+        $DevicesJSON = $this->ReadPropertyString('Devices');
+        $Devices = json_decode($DevicesJSON);
+        foreach ($Devices as $Device) {
+            if ($Device->ObjectID == $ObjectID) {
+               return $Device->MQTTTopic;
+            }
+        }
+        return false;
+    }
+
+    private function isTopicFromList($Topic) {
+        $DevicesJSON = $this->ReadPropertyString('Devices');
+        $Devices = json_decode($DevicesJSON);
+        foreach ($Devices as $Device) {
+            if ($Device->MQTTTopic == $Topic) {
+                return $Device->ObjectID;
+            }
+        }
+        return 0;
     }
 }
