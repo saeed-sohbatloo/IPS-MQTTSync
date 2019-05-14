@@ -8,10 +8,10 @@
  
    ## Inhaltverzeichnis
    1. [Voraussetzungen](#1-voraussetzungen)
-   2. [Installation](#3-installation)
-   3. [Konfiguration in IP-Symcon](#4-konfiguration-in-ip-symcon)
-   4. [Spenden](#5-spenden)
-   5. [Lizenz](#6-lizenz)
+   2. [Installation](#2-installation)
+   3. [Konfiguration in IP-Symcon](#3-konfiguration-in-ip-symcon)
+   4. [Spenden](#4-spenden)
+   5. [Lizenz](#5-lizenz)
    
 ## 1. Voraussetzungen
 
