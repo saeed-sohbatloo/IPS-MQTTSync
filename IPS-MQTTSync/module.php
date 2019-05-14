@@ -85,10 +85,6 @@ class IPS_MQTTSync extends IPSModule
 
                 if ($Instanz <> NULL) {
                     $Payload = json_encode($Instanz);
-
-                    $GroupTopic = $this->ReadPropertyString('GroupTopic');
-                    $Topic = $GroupTopic.'/'.$Topic;
-
                     $this->SendData($Topic,$Payload);
                 }
         }
@@ -123,11 +119,14 @@ class IPS_MQTTSync extends IPSModule
     }
 
     private function SendData(string $topic, string $payload) {
+
+        $GroupTopic = $this->ReadPropertyString('GroupTopic');
+
         $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
         $Data['PacketType'] = 3;
         $Data['QualityOfService'] = 0;
         $Data['Retain'] = false;
-        $Data['Topic'] = $topic;
+        $Data['Topic'] = 'mqttsync/'.$GroupTopic.'/'.$topic;
         $Data['Payload'] = $payload;
 
         $DataJSON = json_encode($Data, JSON_UNESCAPED_SLASHES);
@@ -153,7 +152,8 @@ class IPS_MQTTSync extends IPSModule
                return $Device->MQTTTopic;
             }
         }
-        return false;
+        $this->SendDebug(__FUNCTION__, 'Topic for Object ID: '.$ObjectID.' is not on list!',0);
+        return '';
     }
 
     private function isTopicFromList($Topic) {
@@ -164,6 +164,18 @@ class IPS_MQTTSync extends IPSModule
                 return $Device->ObjectID;
             }
         }
+        $this->SendDebug(__FUNCTION__, 'Topic '.$Topic .' is not on list!',0);
         return 0;
     }
+public function sendDataFromScript(string $Payload) {
+        IPS_LogMessage(__FUNCTION__,print_r($_IPS,true));
+
+        $Topic = $this->TopicFromList($_IPS['SELF']);
+        if ($Topic <> '') {
+            $this->SendData($Topic, $Payload);
+            return true;
+        }
+        return false;
+    }
 }
+
