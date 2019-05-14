@@ -60,7 +60,6 @@ Das Script erhält folgenden Inhalt:
 $Payload['ID'] = 12345;
 $Payload['Name'] = 'Test Variable';
 $Payload['Value'] = 55;
-
 MQTTSync_sendData(41233,json_encode($Payload));  
 ``
 
