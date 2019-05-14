@@ -173,13 +173,15 @@ class IPS_MQTTSync extends IPSModule
 
     public function sendData(string $Payload, string $Topic = '')
     {
-        if ($Topic <> '') {
+        if ($Topic != '') {
             $Topic = $this->TopicFromList($_IPS['SELF']);
         }
-        if ($Topic <> '') {
+        if ($Topic != '') {
             $this->SendMQTTData($Topic, $Payload);
+
             return true;
         }
+
         return false;
     }
 }
