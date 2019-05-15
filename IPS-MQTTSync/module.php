@@ -183,7 +183,8 @@ class IPS_MQTTSync extends IPSModule
         return false;
     }
 
-    public function MQTTCommand(string $topic, string $payload) {
+    public function MQTTCommand(string $topic, string $payload)
+    {
         $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
         $Data['PacketType'] = 3;
         $Data['QualityOfService'] = 0;
@@ -195,6 +196,5 @@ class IPS_MQTTSync extends IPSModule
         $this->SendDebug(__FUNCTION__.'Topic', $Data['Topic'], 0);
         $this->SendDebug(__FUNCTION__, $DataJSON, 0);
         $this->SendDataToParent($DataJSON);
-
     }
 }
