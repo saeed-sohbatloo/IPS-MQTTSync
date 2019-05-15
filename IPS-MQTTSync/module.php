@@ -171,11 +171,9 @@ class IPS_MQTTSync extends IPSModule
         return 0;
     }
 
-    public function sendData(string $Payload, string $Topic = '')
+    public function sendData(string $Payload)
     {
-        if ($Topic != '') {
-            $Topic = $this->TopicFromList($_IPS['SELF']);
-        }
+        $Topic = $this->TopicFromList($_IPS['SELF']);
         if ($Topic != '') {
             $this->SendMQTTData($Topic, $Payload);
 
@@ -183,5 +181,20 @@ class IPS_MQTTSync extends IPSModule
         }
 
         return false;
+    }
+
+    public function MQTTCommand(string $topic, string $payload) {
+        $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
+        $Data['PacketType'] = 3;
+        $Data['QualityOfService'] = 0;
+        $Data['Retain'] = false;
+        $Data['Topic'] = $topic;
+        $Data['Payload'] = $payload;
+
+        $DataJSON = json_encode($Data, JSON_UNESCAPED_SLASHES);
+        $this->SendDebug(__FUNCTION__.'Topic', $Data['Topic'], 0);
+        $this->SendDebug(__FUNCTION__, $DataJSON, 0);
+        $this->SendDataToParent($DataJSON);
+
     }
 }
