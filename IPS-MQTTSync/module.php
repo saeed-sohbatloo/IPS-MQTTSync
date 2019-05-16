@@ -84,6 +84,9 @@ class IPS_MQTTSync extends IPSModule
                     $Payload = json_encode($Instanz);
                     $this->SendMQTTData($Topic, $Payload);
                 }
+                if ($Topic == '') {
+                    $this->SendDebug(__FUNCTION__, 'Topic for Object ID: '.$ObjectID.' is not on list!', 0);
+                }
         }
     }
 
@@ -152,8 +155,6 @@ class IPS_MQTTSync extends IPSModule
                 return $Device->MQTTTopic;
             }
         }
-        $this->SendDebug(__FUNCTION__, 'Topic for Object ID: '.$ObjectID.' is not on list!', 0);
-
         return '';
     }
 
