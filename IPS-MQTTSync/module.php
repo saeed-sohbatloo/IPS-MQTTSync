@@ -155,6 +155,7 @@ class IPS_MQTTSync extends IPSModule
                 return $Device->MQTTTopic;
             }
         }
+
         return '';
     }
 
