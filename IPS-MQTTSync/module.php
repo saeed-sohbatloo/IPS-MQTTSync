@@ -10,6 +10,7 @@ class IPS_MQTTSync extends IPSModule
         parent::Create();
         $this->ConnectParent('{C6D2AEB3-6E1F-4B2E-8E69-3A1A00246850}');
         $this->RegisterPropertyString('GroupTopic', 'symcon');
+        $this->RegisterPropertyBoolean('Retain', false);
         $this->RegisterPropertyString('Devices', '[]');
     }
 
@@ -20,13 +21,13 @@ class IPS_MQTTSync extends IPSModule
         $this->ConnectParent('{C6D2AEB3-6E1F-4B2E-8E69-3A1A00246850}');
 
         $MQTTTopic = $this->ReadPropertyString('GroupTopic');
-        $this->SetReceiveDataFilter('.*mqttsync/'.$MQTTTopic.'.*');
+        $this->SetReceiveDataFilter('.*mqttsync/' . $MQTTTopic . '.*');
 
         $DevicesJSON = $this->ReadPropertyString('Devices');
         if ($DevicesJSON != '') {
             $Devices = json_decode($DevicesJSON);
             foreach ($Devices as $key=>$Device) {
-                $this->SendDebug(__FUNCTION__.'Devices', $Device->ObjectID.' '.$Device->MQTTTopic, 0);
+                $this->SendDebug(__FUNCTION__ . 'Devices', $Device->ObjectID . ' ' . $Device->MQTTTopic, 0);
                 $Instanz = IPS_GetObject($Device->ObjectID);
                 switch ($Instanz['ObjectType']) {
                     case 1:
@@ -85,7 +86,7 @@ class IPS_MQTTSync extends IPSModule
                     $this->SendMQTTData($Topic, $Payload);
                 }
                 if ($Topic == '') {
-                    $this->SendDebug(__FUNCTION__, 'Topic for Object ID: '.$ObjectID.' is not on list!', 0);
+                    $this->SendDebug(__FUNCTION__, 'Topic for Object ID: ' . $ObjectID . ' is not on list!', 0);
                 }
         }
     }
@@ -99,10 +100,10 @@ class IPS_MQTTSync extends IPSModule
             $Topic = explode('/', $Data->Topic);
             $Topic = $Topic[array_key_last($Topic)];
 
-            $this->SendDebug(__FUNCTION__.' Topic', $Topic, 0);
+            $this->SendDebug(__FUNCTION__ . ' Topic', $Topic, 0);
             $ObjectID = $this->isTopicFromList($Topic);
             if ($ObjectID != 0) {
-                $this->SendDebug(__FUNCTION__.'Topic exists on list', $Data->Topic, 0);
+                $this->SendDebug(__FUNCTION__ . 'Topic exists on list', $Data->Topic, 0);
                 $Object = IPS_GetObject($ObjectID);
                 switch ($Object['ObjectType']) {
                     case 3:
@@ -111,11 +112,38 @@ class IPS_MQTTSync extends IPSModule
                         }
                         break;
                     default:
-                        $this->SendDebug(__FUNCTION__.'No Action for ObjectType', $Object['ObjectType'], 0);
+                        $this->SendDebug(__FUNCTION__ . 'No Action for ObjectType', $Object['ObjectType'], 0);
                         break;
                 }
             }
         }
+    }
+
+    public function sendData(string $Payload)
+    {
+        $Topic = $this->TopicFromList($_IPS['SELF']);
+        if ($Topic != '') {
+            $this->SendMQTTData($Topic, $Payload);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function MQTTCommand(string $topic, string $payload)
+    {
+        $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
+        $Data['PacketType'] = 3;
+        $Data['QualityOfService'] = 0;
+        $Data['Retain'] = false;
+        $Data['Topic'] = $topic;
+        $Data['Payload'] = $payload;
+
+        $DataJSON = json_encode($Data, JSON_UNESCAPED_SLASHES);
+        $this->SendDebug(__FUNCTION__ . 'Topic', $Data['Topic'], 0);
+        $this->SendDebug(__FUNCTION__, $DataJSON, 0);
+        $this->SendDataToParent($DataJSON);
     }
 
     private function SendMQTTData(string $topic, string $payload)
@@ -125,12 +153,12 @@ class IPS_MQTTSync extends IPSModule
         $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
         $Data['PacketType'] = 3;
         $Data['QualityOfService'] = 0;
-        $Data['Retain'] = false;
-        $Data['Topic'] = 'mqttsync/'.$GroupTopic.'/'.$topic;
+        $Data['Retain'] = $this->ReadPropertyBoolean('Retain');
+        $Data['Topic'] = 'mqttsync/' . $GroupTopic . '/' . $topic;
         $Data['Payload'] = $payload;
 
         $DataJSON = json_encode($Data, JSON_UNESCAPED_SLASHES);
-        $this->SendDebug(__FUNCTION__.'Topic', $Data['Topic'], 0);
+        $this->SendDebug(__FUNCTION__ . 'Topic', $Data['Topic'], 0);
         $this->SendDebug(__FUNCTION__, $DataJSON, 0);
         $this->SendDataToParent($DataJSON);
     }
@@ -168,35 +196,8 @@ class IPS_MQTTSync extends IPSModule
                 return $Device->ObjectID;
             }
         }
-        $this->SendDebug(__FUNCTION__, 'Topic '.$Topic.' is not on list!', 0);
+        $this->SendDebug(__FUNCTION__, 'Topic ' . $Topic . ' is not on list!', 0);
 
         return 0;
-    }
-
-    public function sendData(string $Payload)
-    {
-        $Topic = $this->TopicFromList($_IPS['SELF']);
-        if ($Topic != '') {
-            $this->SendMQTTData($Topic, $Payload);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public function MQTTCommand(string $topic, string $payload)
-    {
-        $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
-        $Data['PacketType'] = 3;
-        $Data['QualityOfService'] = 0;
-        $Data['Retain'] = false;
-        $Data['Topic'] = $topic;
-        $Data['Payload'] = $payload;
-
-        $DataJSON = json_encode($Data, JSON_UNESCAPED_SLASHES);
-        $this->SendDebug(__FUNCTION__.'Topic', $Data['Topic'], 0);
-        $this->SendDebug(__FUNCTION__, $DataJSON, 0);
-        $this->SendDataToParent($DataJSON);
     }
 }

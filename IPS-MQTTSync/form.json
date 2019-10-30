@@ -2,6 +2,7 @@
     "elements":
     [
       { "type": "ValidationTextBox", "name": "GroupTopic", "caption": "MQTT Topic" },
+      { "type": "CheckBox", "name": "Retain", "caption": "Retain" },
       {
         "type": "List",
         "name": "Devices",
