@@ -70,7 +70,7 @@ class IPS_MQTTSync extends IPSModule
                             $tmpObject = IPS_GetObject($Children);
                             $Instanz[$i]['ID'] = $tmpObject['ObjectID'];
                             $Instanz[$i]['Name'] = $tmpObject['ObjectName'];
-                            $Instanz[$i]['Value'] = GetValue($tmpObject['ObjectID']);
+                            $Instanz[$i]['Value'] = IPS_GetVariable($tmpObject['ObjectID'])['VariableType'];
                             $i++;
                         }
                     }
@@ -79,6 +79,7 @@ class IPS_MQTTSync extends IPSModule
                     $Instanz[0]['ID'] = $Object['ObjectID'];
                     $Instanz[0]['Name'] = $Object['ObjectName'];
                     $Instanz[0]['Value'] = GetValue($Object['ObjectID']);
+                    $Instanz[0]['VariableTyp'] = IPS_GetVariable($Object['ObjectID'])['VariableType'];
                 }
 
                 if ($Instanz != null) {
