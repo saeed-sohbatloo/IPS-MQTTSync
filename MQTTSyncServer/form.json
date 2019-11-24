@@ -33,5 +33,10 @@
         }],
         "values": []
       }
+    ],
+    "actions":
+    [
+      { "type": "Button", "caption": "Send Configuration to Client", "onClick": "MQTTSync_sendConfiguration($id);" },
+      { "type": "Button", "caption": "Send Variablen Profiles to Client", "onClick": "MQTTSync_sendVariablenProfiles($id);" }
     ]
 }

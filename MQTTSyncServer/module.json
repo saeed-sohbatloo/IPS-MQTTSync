@@ -1,9 +1,9 @@
 {
 	"id": "{DC5B9E41-73F8-6360-3F3C-E699C7758A69}",
-	"name": "IPS_MQTTSync",
+	"name": "MQTTSyncServer",
 	"type": 4,
 	"vendor": "",
-	"aliases": ["MQTT Sync"],
+	"aliases": ["MQTT Sync Server"],
 	"parentRequirements": ["{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}"],
 	"childRequirements": [],
 	"implemented": ["{7F7632D9-FA40-4F38-8DEA-C83CD4325A32}"],

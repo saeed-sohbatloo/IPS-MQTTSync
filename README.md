@@ -15,7 +15,7 @@
    
 ## 1. Voraussetzungen
 
-* mindestens IPS Version 5.1
+* mindestens IPS Version 5.3
 * MQTT Server (IPS Modul) 
 
 
@@ -24,51 +24,11 @@
 
 ## 3. Konfiguration in IP-Symcon
 
-Die Instanz (MQTTSync) wird unter Kern Instanzen angelegt.
-Dort kann ein MQTTTopic vergeben werden, Standard ist symcon.
+1. MQTTSyncServer auf Master IPS anlegen
+2. IPS-KS-MQTT Client auf Slave IPS installieren (https://github.com/Schnittcher/IPS-KS-MQTT)
+3. MQTTSyncClientConfigurator auf Slave IPS installieren.
 
-In der Liste können verschiedene Objekte mit einem dazugehörigem Topic angegeben werden.
-
-Wird eine Instanz angegeben, wird bei einer Variablenänderung unterhalb der Instanz ein MQTT Paket mit allen Variablen, die unterhalb dieser Instanz liegen erzeugt und gepusht.
-
-Beispiel:
-
-``
-Topic: mqttsync/symcon/Shelly 1 Test, Payload: [{"ID":19500,"Name":"Status","Value":false},{"ID":57199,"Name":"Leistung","Value":0},{"ID":37912,"Name":"\u00dcbertemperatur","Value":true},{"ID":49144,"Name":"Temperatur","Value":12}]
-``
-
-Wir nur eine Variable angegeben, wird die Variable bei einer Änderung über MQTT gepusht.
-Beispiel:
-
-``
-Topic: mqttsync/symcon/ScriptTest, Payload: {"ID":12345,"Name":"Test Variable","Value":55}
-``
-
-Wird ein Script angegeben gibt es zwei Möglichkeiten, das Script kann per MQTT Befehl gestartet werden oder innerhlab eines Scriptes kann ein MQTT Kommando erzeugt werden und per MQTT gepusht werden.
-
-Beispiel Variante 1:
-
-Das Script welches in der Liste hinterlegt wurde, hat das Topic ScriptTest erhalten.
-Es wird ein leeres Payload zu dem Topic: mqttsync/symcon/TestScript gepusht.
-Nun wird das Script ausgeführt.
-
-Beispiel Variante 2:
-
-Das Script erhält folgenden Inhalt:
-
-```php
-$Payload['ID'] = 12345;
-$Payload['Name'] = 'Test Variable';
-$Payload['Value'] = 55;
-MQTTSync_sendData(41233,json_encode($Payload));  
-```
-
-Wird nun das Script ausgeführt, wird in der Liste nach dem richtigen Topic gesucht und das Payload per MQTT gepusht.
-Das würde so aussehen:
-
-``
-Topic: mqttsync/symcon/ScriptTest, Payload: {"ID":12345,"Name":"Test Variable","Value":55}
-``
+Die vorläufige Doku kann den einzelnen Instanzen entnommen werden.
 
 ## 4. Spenden
 
