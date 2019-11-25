@@ -37,7 +37,7 @@ class MQTTSyncClientDevice extends IPSModule
             $Variablen = json_decode($Buffer->MSG);
             foreach ($Variablen as $Variable) {
                 if ($Variable->ObjectIdent == '') {
-                    $ObjectIdent = $this->ReadPropertyString('MQTTTopic').'_'.$Variable->ID;
+                    $ObjectIdent = $Variable->ID;
                 } else {
                     $ObjectIdent == $Variable->ObjectIdent;
                 }
