@@ -19,8 +19,8 @@ class MQTTSyncClientDevice extends IPSModule
         $this->ConnectParent('{EE0D345A-CF31-428A-A613-33CE98E752DD}');
 
         $MQTTTopic = $this->ReadPropertyString('MQTTTopic');
-        //$this->SetReceiveDataFilter('mqttsync/SymconDev/'.$MQTTTopic);
-        $this->SetReceiveDataFilter('.*' . $MQTTTopic . '.*');
+        $this->SetReceiveDataFilter('.*mqttsync/'.$MQTTTopic.'.*');
+        //$this->SetReceiveDataFilter('.*' . $MQTTTopic . '.*');
 
     }
 
@@ -33,31 +33,36 @@ class MQTTSyncClientDevice extends IPSModule
         if (property_exists($Buffer, 'TOPIC')) {
             $Variablen = json_decode($Buffer->MSG);
             foreach ($Variablen as $Variable) {
-                $ID = $this->GetIDForIdent($Variable->ObjectIdent);
+                if ($Variable->ObjectIdent == '') {
+                    $ObjectIdent = $this->ReadPropertyString('MQTTTopic').'_'.$Variable->ID;
+                } else {
+                    $ObjectIdent == $Variable->ObjectIdent;
+                }
+                $ID = $this->GetIDForIdent($ObjectIdent);
                 if (!$ID) {
                     switch ($Variable->VariableTyp) {
                         case 0:
-                            $this->RegisterVariableBoolean($Variable->ObjectIdent, $Variable->Name, $Variable->VariableProfile);
+                            $this->RegisterVariableBoolean($ObjectIdent, $Variable->Name, $Variable->VariableProfile);
                             break;
                         case 1:
-                            $this->RegisterVariableInteger($Variable->ObjectIdent, $Variable->Name, $Variable->VariableProfile);
+                            $this->RegisterVariableInteger($ObjectIdent, $Variable->Name, $Variable->VariableProfile);
                             break;
                         case 2:
-                            $this->RegisterVariableFloat($Variable->ObjectIdent, $Variable->Name, $Variable->VariableProfile);
+                            $this->RegisterVariableFloat($ObjectIdent, $Variable->Name, $Variable->VariableProfile);
                             break;
                         case 3:
-                            $this->RegisterVariableString($Variable->ObjectIdent, $Variable->Name, $Variable->VariableProfile);
+                            $this->RegisterVariableString($ObjectIdent, $Variable->Name, $Variable->VariableProfile);
                             break;
                         default:
                             IPS_LogMessage('MQTTSync Client', 'invalid variablen profile');
                             break;
                     }
                     if ($Variable->VariableAction != 0) {
-                        $this->EnableAction($Variable->ObjectIdent);
+                        $this->EnableAction($ObjectIdent);
                     }
                 }
-                $this->SendDebug('Value for ' . $Variable->ObjectIdent . ':', $Variable->Value, 0);
-                $this->SetValue($Variable->ObjectIdent, $Variable->Value);
+                $this->SendDebug('Value for ' . $ObjectIdent . ':', $Variable->Value, 0);
+                $this->SetValue($ObjectIdent, $Variable->Value);
             }
         }
     }

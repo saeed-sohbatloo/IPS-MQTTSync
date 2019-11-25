@@ -11,7 +11,6 @@ class MQTTSyncClientConfigurator extends IPSModule
         $this->ConnectParent('{EE0D345A-CF31-428A-A613-33CE98E752DD}');
         $this->RegisterPropertyString('GroupTopic', 'symcon');
         $this->RegisterAttributeString('Devices', '[]');
-        //$this->RegisterPropertyString('Devices', '[]');
     }
 
     public function GetConfigurationForm()
@@ -28,16 +27,17 @@ class MQTTSyncClientConfigurator extends IPSModule
             $tmpDevice = [];
             $tmpDevice = [
                 'ObjectID'      => $Device->ObjectID,
-                'ObjectName'    => IPS_GetObject($Device->ObjectID)['ObjectName'],
+                'ObjectName'    => $Device->ObjectName,
                 'MQTTTopic'     => $Device->MQTTTopic,
-                'ObjectType'    => IPS_GetObject($Device->ObjectID)['ObjectType'],
+                'ObjectType'    => $Device->ObjectType,
+                'name'          => $Device->ObjectName,
                 'instanceID'    => $instanceID
 
             ];
             $tmpDevice['create'] = [
                 'moduleID'      => '{F6B7EB9F-7624-1026-44C1-9AF4059C26ED}',
                 'configuration' => [
-                    'MQTTTopic'    => $Device->MQTTTopic,
+                    'MQTTTopic'    => $this->ReadPropertyString('GroupTopic').'/'.$Device->MQTTTopic,
                 ],
             ];
 
