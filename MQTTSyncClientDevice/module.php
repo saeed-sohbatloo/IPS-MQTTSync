@@ -75,7 +75,7 @@ class MQTTSyncClientDevice extends IPSModule
         $MSG = [];
         $MSG['ObjectIdent'] = $Ident;
         $MSG['Value'] = $Value;
-        $Topic = 'mqttsync/'. $this->ReadPropertyString('MQTTTopic').'/set';
+        $Topic = 'mqttsync/'.$this->ReadPropertyString('GroupTopic').'/'. $this->ReadPropertyString('MQTTTopic').'/set';
         $this->sendMQTTCommand($Topic, json_encode($MSG));
 
         //$this->SetValue($Ident,$Value);
