@@ -111,7 +111,7 @@ class MQTTSyncServer extends IPSModule
                 }
             }
     }
-    
+
     public function ReceiveData($JSONString)
     {
         $this->SendDebug('ReceiveData JSON', $JSONString, 0);
@@ -124,18 +124,18 @@ class MQTTSyncServer extends IPSModule
             $Payload = json_decode($Data->Payload);
 
             if ($Topic == 'set') {
-                $this->SendDebug(__FUNCTION__.'Topic: '.'set ', $arrTopic[$CountItems-2],0);
-                $this->SendDebug(__FUNCTION__.'Topic: '.'set Ident ', $Payload->ObjectIdent,0);
-                $this->SendDebug(__FUNCTION__.'Topic: '.'set Value ', $Payload->Value,0);
-                $ObjectID = $this->isTopicFromList($arrTopic[$CountItems-2]);
+                $this->SendDebug(__FUNCTION__ . 'Topic: ' . 'set ', $arrTopic[$CountItems - 2], 0);
+                $this->SendDebug(__FUNCTION__ . 'Topic: ' . 'set Ident ', $Payload->ObjectIdent, 0);
+                $this->SendDebug(__FUNCTION__ . 'Topic: ' . 'set Value ', $Payload->Value, 0);
+                $ObjectID = $this->isTopicFromList($arrTopic[$CountItems - 2]);
 
-                $VariablenID = IPS_GetObjectIDByIdent($Payload->ObjectIdent,$ObjectID);
-                RequestAction($VariablenID,$Payload->Value);
+                $VariablenID = IPS_GetObjectIDByIdent($Payload->ObjectIdent, $ObjectID);
+                RequestAction($VariablenID, $Payload->Value);
                 return;
             }
 
             if ($Topic == 'get') {
-                $this->SendDebug(__FUNCTION__,'Topic: '.'get '.  $arrTopic[$CountItems-2],0);
+                $this->SendDebug(__FUNCTION__, 'Topic: ' . 'get ' . $arrTopic[$CountItems - 2], 0);
             }
 
             $this->SendDebug(__FUNCTION__ . ' Topic', $Topic, 0);
@@ -184,7 +184,8 @@ class MQTTSyncServer extends IPSModule
         $this->SendDataToParent($DataJSON);
     }
 
-    public function sendConfiguration() {
+    public function sendConfiguration()
+    {
         $DevicesJSON = $this->ReadPropertyString('Devices');
         $Devices = json_decode($DevicesJSON);
         $Configuration = [];
@@ -199,28 +200,33 @@ class MQTTSyncServer extends IPSModule
         $this->SendMQTTData('Configuration', json_encode($Configuration));
     }
 
-    public function getVariablenProfileNames() {
+    public function getVariablenProfileNames()
+    {
         $DevicesJSON = $this->ReadPropertyString('Devices');
         $Devices = json_decode($DevicesJSON);
         $VariablenProfileNames = [];
         foreach ($Devices as $key => $Device) {
             $Object = IPS_GetObject($Device->ObjectID);
-           switch ($Object['ObjectType']) {
+            switch ($Object['ObjectType']) {
                case 1:
                     $ChildrenIDs = $Object['ChildrenIDs'];
                     foreach ($ChildrenIDs as $ChildrenID) {
-                        if(IPS_GetObject($ChildrenID)['ObjectType'] == 2) {
+                        if (IPS_GetObject($ChildrenID)['ObjectType'] == 2) {
                             $VariablenProfileName = IPS_GetVariable($ChildrenID)['VariableProfile'];
-                            if (!in_array($VariablenProfileName,$VariablenProfileNames)) {
-                                array_push($VariablenProfileNames, $VariablenProfileName);
+                            if ($VariablenProfileName != '') {
+                                if (!in_array($VariablenProfileName, $VariablenProfileNames)) {
+                                    array_push($VariablenProfileNames, $VariablenProfileName);
+                                }
                             }
-                        }           
+                        }
                     }
                     break;
                 case 2:
                     $VariablenProfileName = IPS_GetVariable($Device->ObjectID)['VariableProfile'];
-                    if (!in_array($VariablenProfileName,$VariablenProfileNames)) {
-                        array_push($VariablenProfileNames, $VariablenProfileName);
+                    if ($VariablenProfileName != '') {
+                        if (!in_array($VariablenProfileName, $VariablenProfileNames)) {
+                            array_push($VariablenProfileNames, $VariablenProfileName);
+                        }
                     }
                 break;
                 default:
@@ -230,12 +236,13 @@ class MQTTSyncServer extends IPSModule
         return $VariablenProfileNames;
     }
 
-    public function sendVariablenProfiles() {
+    public function sendVariablenProfiles()
+    {
         $ProfileNames = $this->getVariablenProfileNames();
         $VariablenProfiles = [];
 
         foreach ($ProfileNames as $ProfileName) {
-            if ($ProfileName[0] <> '~') {
+            if ($ProfileName[0] != '~') {
                 array_push($VariablenProfiles, IPS_GetVariableProfile($ProfileName));
             }
         }
