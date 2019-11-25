@@ -37,7 +37,8 @@ class MQTTSyncClientConfigurator extends IPSModule
             $tmpDevice['create'] = [
                 'moduleID'      => '{F6B7EB9F-7624-1026-44C1-9AF4059C26ED}',
                 'configuration' => [
-                    'MQTTTopic'    => $this->ReadPropertyString('GroupTopic').'/'.$Device->MQTTTopic,
+                    'GroupTopic'   => $this->ReadPropertyString('GroupTopic'),
+                    'MQTTTopic'    => $Device->MQTTTopic,
                 ],
             ];
 

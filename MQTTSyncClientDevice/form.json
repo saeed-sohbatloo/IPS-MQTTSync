@@ -1,6 +1,7 @@
 {
     "elements":
     [
+      { "type": "ValidationTextBox", "name": "GroupTopic", "caption": "MQTT Group Topic" },
       { "type": "ValidationTextBox", "name": "MQTTTopic", "caption": "MQTT Topic" }
     ]
 }
