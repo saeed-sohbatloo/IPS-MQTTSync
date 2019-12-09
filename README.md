@@ -1,7 +1,7 @@
 [![Version](https://img.shields.io/badge/Symcon-PHPModul-red.svg)](https://www.symcon.de/service/dokumentation/entwicklerbereich/sdk-tools/sdk-php/)
 ![Version](https://img.shields.io/badge/Symcon%20Version-5.3%20%3E-blue.svg)
 [![License](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-green.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/)
-[![Check Style](https://github.com/Schnittcher/IPS-MQTTSync/workflows/Check%20Style/badge.svg)](https://github.com/Schnittcher/IPS-Tasmota/actions)
+[![Check Style](https://github.com/Schnittcher/IPS-MQTTSync/workflows/Check%20Style/badge.svg)](https://github.com/Schnittcher/IPS-MQTTSync/actions)
 
 
 # IPS-MQTTSync
@@ -26,7 +26,7 @@
 ## 3. Konfiguration in IP-Symcon
 
 1. MQTTSyncServer auf Master IPS anlegen
-2. MQTTClient Client auf Slave IPS installieren (https://github.com/Schnittcher/MQTTClient)
+2. MQTTClient auf Slave IPS installieren (https://github.com/Schnittcher/MQTTClient)
 3. MQTTSyncClientConfigurator auf Slave IPS installieren.
 
 Die vorläufige Doku kann den einzelnen Instanzen entnommen werden.
