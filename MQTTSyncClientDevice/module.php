@@ -33,8 +33,8 @@ class MQTTSyncClientDevice extends IPSModule
         $Data = json_decode($JSONString);
         $Buffer = json_decode($Data->Buffer);
 
-        if (property_exists($Buffer, 'TOPIC')) {
-            $Variablen = json_decode($Buffer->MSG);
+        if (property_exists($Buffer, 'Topic')) {
+            $Variablen = json_decode($Buffer->Payload);
             foreach ($Variablen as $Variable) {
                 if ($Variable->ObjectIdent == '') {
                     $ObjectIdent = $Variable->ID;
@@ -72,20 +72,17 @@ class MQTTSyncClientDevice extends IPSModule
 
     public function RequestAction($Ident, $Value)
     {
-        $MSG = [];
-        $MSG['ObjectIdent'] = $Ident;
-        $MSG['Value'] = $Value;
+        $Payload = [];
+        $Payload['ObjectIdent'] = $Ident;
+        $Payload['Value'] = $Value;
         $Topic = 'mqttsync/'.$this->ReadPropertyString('GroupTopic').'/'. $this->ReadPropertyString('MQTTTopic').'/set';
-        $this->sendMQTTCommand($Topic, json_encode($MSG));
-
-        //$this->SetValue($Ident,$Value);
-
+        $this->sendMQTTCommand($Topic, json_encode($Payload));
     }
 
-    protected function sendMQTTCommand($topic, $msg, $retain = 0)
+    protected function sendMQTTCommand($topic, $payload, $retain = 0)
     {
         $Buffer['Topic'] = $topic;
-        $Buffer['MSG'] = $msg;
+        $Buffer['Payload'] = $payload;
         $Buffer['Retain'] = $retain;
         $BufferJSON = json_encode($Buffer);
         $this->SendDebug('sendMQTTCommand Buffer', $BufferJSON, 0);

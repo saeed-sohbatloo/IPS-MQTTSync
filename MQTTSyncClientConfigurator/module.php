@@ -65,19 +65,19 @@ class MQTTSyncClientConfigurator extends IPSModule
         $Data = json_decode($JSONString);
         $Buffer = json_decode($Data->Buffer);
 
-        if (property_exists($Buffer, 'TOPIC')) {
-            $arrTopic = explode('/', $Buffer->TOPIC);
+        if (property_exists($Buffer, 'Topic')) {
+            $arrTopic = explode('/', $Buffer->Topic);
             $CountItems = count($arrTopic);
             $Topic = $arrTopic[array_key_last($arrTopic)];
             if ($Topic == 'Configuration') {
-                $Devices = json_decode($Buffer->MSG);
-                $this->WriteAttributeString('Devices', $Buffer->MSG);
-                $this->UpdateFormField('Devices', 'values', $Buffer->MSG);
+                $Devices = json_decode($Buffer->Payload);
+                $this->WriteAttributeString('Devices', $Buffer->Payload);
+                $this->UpdateFormField('Devices', 'values', $Buffer->Payload);
 
                 $this->SendDebug(__FUNCTION__, 'Topic: ' . 'Configuration ', 0);
             }
             if ($Topic == 'VariablenProfiles') {
-                $Profiles = json_decode($Buffer->MSG, true);
+                $Profiles = json_decode($Buffer->Payload, true);
 
                 foreach ($Profiles as $Profile) {
                     $profileName = $Profile['ProfileName'];
