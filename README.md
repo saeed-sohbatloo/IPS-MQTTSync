@@ -5,7 +5,7 @@
 
 
 # IPS-MQTTSync
-   DIeses Modul ermöglicht es Daten aus IP-Symcon zu MQTT zu pushen oder Scripte in IP-Symocn über MQTT auszuführen.
+   Dieses Modul ermöglicht es Daten aus IP-Symcon zu MQTT zu pushen oder Scripte in IP-Symcon über MQTT auszuführen.
  
    ## Inhaltverzeichnis
    1. [Voraussetzungen](#1-voraussetzungen)
