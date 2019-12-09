@@ -11,7 +11,6 @@ class MQTTSyncClientDevice extends IPSModule
         $this->ConnectParent('{EE0D345A-CF31-428A-A613-33CE98E752DD}');
         $this->RegisterPropertyString('MQTTTopic', '');
         $this->RegisterPropertyString('GroupTopic', '');
-        
     }
 
     public function ApplyChanges()
@@ -22,9 +21,8 @@ class MQTTSyncClientDevice extends IPSModule
 
         $GroupTopic = $this->ReadPropertyString('GroupTopic');
         $MQTTTopic = $this->ReadPropertyString('MQTTTopic');
-        $this->SetReceiveDataFilter('.*mqttsync/'.$GroupTopic.'/'.$MQTTTopic.'.*');
+        $this->SetReceiveDataFilter('.*mqttsync/' . $GroupTopic . '/' . $MQTTTopic . '.*');
         //$this->SetReceiveDataFilter('.*' . $MQTTTopic . '.*');
-
     }
 
     public function ReceiveData($JSONString)
@@ -75,7 +73,7 @@ class MQTTSyncClientDevice extends IPSModule
         $Payload = [];
         $Payload['ObjectIdent'] = $Ident;
         $Payload['Value'] = $Value;
-        $Topic = 'mqttsync/'.$this->ReadPropertyString('GroupTopic').'/'. $this->ReadPropertyString('MQTTTopic').'/set';
+        $Topic = 'mqttsync/' . $this->ReadPropertyString('GroupTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '/set';
         $this->sendMQTTCommand($Topic, json_encode($Payload));
     }
 
