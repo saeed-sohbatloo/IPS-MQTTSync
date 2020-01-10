@@ -84,6 +84,6 @@ class MQTTSyncClientDevice extends IPSModule
         $Buffer['Retain'] = $retain;
         $BufferJSON = json_encode($Buffer);
         $this->SendDebug('sendMQTTCommand Buffer', $BufferJSON, 0);
-        $this->SendDataToParent(json_encode(['DataID' => '{018EF6B5-AB94-40C6-AA53-46943E824ACF}', 'Action' => 'Publish', 'Buffer' => $BufferJSON]));
+        $this->SendDataToParent(json_encode(['DataID' => '{97475B04-67C3-A74D-C970-E9409B0EFA1D}', 'Action' => 'Publish', 'Buffer' => $BufferJSON]));
     }
 }
