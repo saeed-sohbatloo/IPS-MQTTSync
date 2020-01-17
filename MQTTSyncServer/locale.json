@@ -1,7 +1,11 @@
 {
   "translations": {
     "de": {
-      "State": "Status"
+      "State": "Status",
+      "Devices": "Geräte",
+      "ObjectID": "ObjektID",
+      "Send Configuration to Client": "Sende Konfiguration zum Client",
+      "Send Variablen Profiles to Client": "Sende Variablenprofile zum Client"
     }
   }
 }
