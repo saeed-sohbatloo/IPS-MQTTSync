@@ -99,9 +99,9 @@ class MQTTSyncServer extends IPSModule
                         $Instanz[0]['ObjectIdent'] = $Object['ObjectIdent'];
                         $Instanz[0]['VariableTyp'] = IPS_GetVariable($Object['ObjectID'])['VariableType'];
                         $Instanz[0]['VariableAction'] = IPS_GetVariable($Object['ObjectID'])['VariableAction'];
-                        $Instanz[0]['VariableCustomAction'] = IPS_GetVariable($tmpObject['ObjectID'])['VariableCustomAction'];
+                        $Instanz[0]['VariableCustomAction'] = IPS_GetVariable($Object['ObjectID'])['VariableCustomAction'];
                         $Instanz[0]['VariableProfile'] = IPS_GetVariable($Object['ObjectID'])['VariableProfile'];
-                        $Instanz[0]['VariableCustomProfile'] = IPS_GetVariable($tmpObject['ObjectID'])['VariableCustomProfile'];
+                        $Instanz[0]['VariableCustomProfile'] = IPS_GetVariable($Object['ObjectID'])['VariableCustomProfile'];
                         $Instanz[0]['Value'] = GetValue($Object['ObjectID']);
                     }
 
