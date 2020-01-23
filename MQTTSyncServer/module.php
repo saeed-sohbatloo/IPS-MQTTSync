@@ -133,7 +133,11 @@ class MQTTSyncServer extends IPSModule
                 $this->SendDebug(__FUNCTION__ . 'Topic: ' . 'set Value ', $Payload->Value, 0);
                 $ObjectID = $this->isTopicFromList($arrTopic[$CountItems - 2]);
 
-                $VariablenID = IPS_GetObjectIDByIdent($Payload->ObjectIdent, $ObjectID);
+                if ($ObjectID == $Payload->ObjectIdent) {
+                    $VariablenID = $Payload->ObjectIdent;
+                } else {
+                    $VariablenID = IPS_GetObjectIDByIdent($Payload->ObjectIdent, $ObjectID);
+                }
                 RequestAction($VariablenID, $Payload->Value);
                 return;
             }
