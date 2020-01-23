@@ -39,26 +39,32 @@ class MQTTSyncClientDevice extends IPSModule
                 } else {
                     $ObjectIdent = $Variable->ObjectIdent;
                 }
+
+                if ($Variable->VariableCustomProfile != '') {
+                    $VariableProfile = $Variable->VariableCustomProfile;
+                } else {
+                    $VariableProfile = $Variable->VariableProfile;
+                }
                 $ID = $this->GetIDForIdent($ObjectIdent);
                 if (!$ID) {
                     switch ($Variable->VariableTyp) {
                         case 0:
-                            $this->RegisterVariableBoolean($ObjectIdent, $Variable->Name, $Variable->VariableProfile);
+                            $this->RegisterVariableBoolean($ObjectIdent, $Variable->Name, $VariableProfile);
                             break;
                         case 1:
-                            $this->RegisterVariableInteger($ObjectIdent, $Variable->Name, $Variable->VariableProfile);
+                            $this->RegisterVariableInteger($ObjectIdent, $Variable->Name, $VariableProfile);
                             break;
                         case 2:
-                            $this->RegisterVariableFloat($ObjectIdent, $Variable->Name, $Variable->VariableProfile);
+                            $this->RegisterVariableFloat($ObjectIdent, $Variable->Name, $VariableProfile);
                             break;
                         case 3:
-                            $this->RegisterVariableString($ObjectIdent, $Variable->Name, $Variable->VariableProfile);
+                            $this->RegisterVariableString($ObjectIdent, $Variable->Name, $VariableProfile);
                             break;
                         default:
                             IPS_LogMessage('MQTTSync Client', 'invalid variablen profile');
                             break;
                     }
-                    if ($Variable->VariableAction != 0) {
+                    if ($Variable->VariableAction != 0 || $Variable->VariableCustomAction != 0) {
                         $this->EnableAction($ObjectIdent);
                     }
                 }
