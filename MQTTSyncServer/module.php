@@ -226,6 +226,12 @@ class MQTTSyncServer extends IPSModule
                                     array_push($VariablenProfileNames, $VariablenProfileName);
                                 }
                             }
+                            $VariableCustomProfileName = IPS_GetVariable($ChildrenID)['VariableCustomProfile'];
+                            if ($VariableCustomProfileName != '') {
+                                if (!in_array($VariableCustomProfileName, $VariablenProfileNames)) {
+                                    array_push($VariablenProfileNames, $VariableCustomProfileName);
+                                }
+                            }
                         }
                     }
                     break;
@@ -234,6 +240,12 @@ class MQTTSyncServer extends IPSModule
                     if ($VariablenProfileName != '') {
                         if (!in_array($VariablenProfileName, $VariablenProfileNames)) {
                             array_push($VariablenProfileNames, $VariablenProfileName);
+                        }
+                        $VariableCustomProfileName = IPS_GetVariable($Device->ObjectID)['VariableCustomProfile'];
+                        if ($VariableCustomProfileName != '') {
+                            if (!in_array($VariableCustomProfileName, $VariablenProfileNames)) {
+                                array_push($VariablenProfileNames, $VariableCustomProfileName);
+                            }
                         }
                     }
                 break;
@@ -266,9 +278,10 @@ class MQTTSyncServer extends IPSModule
 
         foreach ($Devices as $key => $Device) {
             $Object = IPS_GetObject($Device->ObjectID);
-            if ($this->isInstance($Device->ObjectID)) {
-                $Topic = $this->TopicFromList($Object['ParentID']);
-                $PObject = IPS_GetObject($Object['ParentID']);
+            $this->SendDebug('ObjectID', $Device->ObjectID, 0);
+            if ($Object['ObjectType'] == 1) {
+                $Topic = $this->TopicFromList($Object['ObjectID']);
+                $PObject = IPS_GetObject($Object['ObjectID']);
                 $i = 0;
                 foreach ($PObject['ChildrenIDs'] as $Children) {
                     if (IPS_VariableExists($Children)) {
