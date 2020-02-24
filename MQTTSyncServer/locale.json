@@ -5,7 +5,8 @@
       "Devices": "Geräte",
       "ObjectID": "ObjektID",
       "Send Configuration to Client": "Sende Konfiguration zum Client",
-      "Send Variablen Profiles to Client": "Sende Variablenprofile zum Client"
+      "Send Variablen Profiles to Client": "Sende Variablenprofile zum Client",
+      "Send Variables to Client": "Sende Variablen zum Client"
     }
   }
 }
