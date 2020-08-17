@@ -83,7 +83,7 @@ class MQTTSyncClientDevice extends IPSModule
         $this->sendMQTTCommand($Topic, json_encode($Payload));
     }
 
-    protected function sendMQTTCommand($topic, $payload, $retain = 0)
+    protected function sendMQTTCommand($topic, $payload, $retain = false)
     {
         $Buffer['Topic'] = $topic;
         $Buffer['Payload'] = $payload;
