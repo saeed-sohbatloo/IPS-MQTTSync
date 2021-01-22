@@ -311,7 +311,8 @@ class MQTTSyncServer extends IPSModule
                 $Instanz[0]['Value'] = GetValue($Object['ObjectID']);
             }
             if ($Instanz != null) {
-                $Payload = json_encode($Instanz);
+                //$Payload = json_encode($Instanz);
+                $Payload = $Instanz;
                 $this->SendMQTTData($Topic, $Payload);
             }
             if ($Topic == '') {
