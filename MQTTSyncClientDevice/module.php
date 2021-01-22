@@ -29,10 +29,9 @@ class MQTTSyncClientDevice extends IPSModule
     {
         $this->SendDebug('ReceiveData JSON', $JSONString, 0);
         $Data = json_decode($JSONString);
-        $Buffer = json_decode($Data->Buffer);
 
-        if (property_exists($Buffer, 'Topic')) {
-            $Variablen = json_decode($Buffer->Payload);
+        if (property_exists($Data, 'Topic')) {
+            $Variablen = json_decode($Data->Payload);
             foreach ($Variablen as $Variable) {
                 if ($Variable->ObjectIdent == '') {
                     $ObjectIdent = $Variable->ID;
@@ -80,16 +79,19 @@ class MQTTSyncClientDevice extends IPSModule
         $Payload['ObjectIdent'] = $Ident;
         $Payload['Value'] = $Value;
         $Topic = 'mqttsync/' . $this->ReadPropertyString('GroupTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '/set';
-        $this->sendMQTTCommand($Topic, json_encode($Payload));
+        $this->sendMQTTCommand($Topic, $Payload);
     }
 
     protected function sendMQTTCommand($topic, $payload, $retain = false)
     {
-        $Buffer['Topic'] = $topic;
-        $Buffer['Payload'] = $payload;
-        $Buffer['Retain'] = $retain;
-        $BufferJSON = json_encode($Buffer);
-        $this->SendDebug('sendMQTTCommand Buffer', $BufferJSON, 0);
-        $this->SendDataToParent(json_encode(['DataID' => '{97475B04-67C3-A74D-C970-E9409B0EFA1D}', 'Action' => 'Publish', 'Buffer' => $BufferJSON]));
+        $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
+        $Data['PacketType'] = 3;
+        $Data['QualityOfService'] = 0;
+        $Data['Retain'] = $retain;
+        $Data['Topic'] = $topic;
+        $Data['Payload'] = json_encode($payload);
+        $DataJSON = json_encode($Data, JSON_UNESCAPED_SLASHES);
+        $this->SendDebug(__FUNCTION__ . 'MQTT Publish', $DataJSON, 0);
+        $resultServer = $this->SendDataToParent($DataJSON);
     }
 }

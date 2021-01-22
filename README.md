@@ -16,8 +16,7 @@
    
 ## 1. Voraussetzungen
 
-* mindestens IPS Version 5.3
-* MQTT Server (IPS Modul) 
+* mindestens IPS Version 5.5
 
 
 ## 2. Installation
@@ -29,7 +28,7 @@
 2. MQTTClient über den Module Store auf Slave IPS installieren
 3. MQTTSyncClientConfigurator auf Slave IPS installieren.
 
-Die vorläufige Doku kann den einzelnen Instanzen entnommen werden.
+Die Doku kann den einzelnen Instanzen entnommen werden.
 
 ## 4. Spenden
 

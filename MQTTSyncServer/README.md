@@ -9,7 +9,7 @@
    
 ## 1. Voraussetzungen
 
-* mindestens IPS Version 5.3
+* mindestens IPS Version 5.5
 
 ## 2. Konfiguration in IP-Symcon
 
