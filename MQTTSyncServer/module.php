@@ -241,13 +241,13 @@ class MQTTSyncServer extends IPSModule
                         if (!in_array($VariablenProfileName, $VariablenProfileNames)) {
                             array_push($VariablenProfileNames, $VariablenProfileName);
                         }
+					}
                         $VariableCustomProfileName = IPS_GetVariable($Device->ObjectID)['VariableCustomProfile'];
                         if ($VariableCustomProfileName != '') {
                             if (!in_array($VariableCustomProfileName, $VariablenProfileNames)) {
                                 array_push($VariablenProfileNames, $VariableCustomProfileName);
                             }
                         }
-                    }
                 break;
                 default:
                     break;
