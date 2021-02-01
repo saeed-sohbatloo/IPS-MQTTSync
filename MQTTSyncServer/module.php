@@ -277,6 +277,7 @@ class MQTTSyncServer extends IPSModule
         $Instanz = null;
 
         foreach ($Devices as $key => $Device) {
+            $Instanz = [];
             $Object = IPS_GetObject($Device->ObjectID);
             $this->SendDebug('ObjectID', $Device->ObjectID, 0);
             if ($Object['ObjectType'] == 1) {
