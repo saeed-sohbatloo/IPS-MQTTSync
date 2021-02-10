@@ -32,7 +32,7 @@ class MQTTSyncServer extends IPSModule
                 $this->SendDebug(__FUNCTION__ . 'Devices', $Device->ObjectID . ' ' . $Device->MQTTTopic, 0);
                 $Instanz = IPS_GetObject($Device->ObjectID);
                 switch ($Instanz['ObjectType']) {
-                    case 1:
+                    case 1: //Object
                         foreach ($Instanz['ChildrenIDs'] as $Children) {
                             if (IPS_VariableExists($Children)) {
                                 $this->RegisterMessage($Children, VM_UPDATE);
@@ -40,8 +40,7 @@ class MQTTSyncServer extends IPSModule
                             }
                         }
                         break;
-                    case 2:
-                        $this->SendDebug(__FUNCTION__, 'Script', 0);
+                    case 2: //Variable
                         if (IPS_VariableExists($Instanz['ObjectID'])) {
                             $this->RegisterMessage($Instanz['ObjectID'], VM_UPDATE);
                             array_push($activeMessages, $Instanz['ObjectID']);
@@ -52,7 +51,6 @@ class MQTTSyncServer extends IPSModule
                         break;
                 }
             }
-
             //Unregesiter Variablen - welche nicht mehr in der Liste vorhanden sind
             $MessageList = $this->GetMessageList();
             foreach ($MessageList as $key=>$Device) {
@@ -144,6 +142,15 @@ class MQTTSyncServer extends IPSModule
 
             if ($Topic == 'get') {
                 $this->SendDebug(__FUNCTION__, 'Topic: ' . 'get ' . $arrTopic[$CountItems - 2], 0);
+                switch ($Payload->config) {
+                    case 'variables':
+                        $this->sendVariablen();
+                        break;
+                    default:
+                        $this->SendDebug(__FUNCTION__, 'Invalid get Payload: ' . $Payload->config, 0);
+                        break;
+                }
+                return;
             }
 
             $this->SendDebug(__FUNCTION__ . ' Topic', $Topic, 0);
@@ -167,7 +174,7 @@ class MQTTSyncServer extends IPSModule
 
     public function sendData(string $Payload)
     {
-        $Topic = $this->TopicFromList($_IPS['SELF']);
+        $Topic = $this->Devices($_IPS['SELF']);
         if ($Topic != '') {
             $this->SendMQTTData($Topic, $Payload);
 
@@ -190,6 +197,12 @@ class MQTTSyncServer extends IPSModule
         $this->SendDebug(__FUNCTION__ . 'Topic', $Data['Topic'], 0);
         $this->SendDebug(__FUNCTION__, $DataJSON, 0);
         $this->SendDataToParent($DataJSON);
+    }
+
+    public function synchronizeData()
+    {
+        $this->sendConfiguration();
+        $this->sendVariablenProfiles();
     }
 
     public function sendConfiguration()
