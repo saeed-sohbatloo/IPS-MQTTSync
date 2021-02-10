@@ -21,7 +21,7 @@ class MQTTSyncClientDevice extends IPSModule
 
         $GroupTopic = $this->ReadPropertyString('GroupTopic');
         $MQTTTopic = $this->ReadPropertyString('MQTTTopic');
-        $this->SetReceiveDataFilter('.*mqttsync/' . $GroupTopic . '/' . $MQTTTopic . '.*');
+        $this->SetReceiveDataFilter('.*mqttsync/' . $GroupTopic . '/' . $MQTTTopic . '".*');
 
         $Payload = [];
         $Payload['config'] = 'variables';
