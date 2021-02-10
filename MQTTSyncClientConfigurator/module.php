@@ -30,7 +30,7 @@ class MQTTSyncClientConfigurator extends IPSModule
                 'ObjectName'    => $Device->ObjectName,
                 'MQTTTopic'     => $Device->MQTTTopic,
                 'ObjectType'    => $Device->ObjectType,
-                'name'          => $Device->ObjectName,
+                'name'          => $Device->ObjectName . ' (' . $Device->MQTTTopic . ')',
                 'instanceID'    => $instanceID
 
             ];
