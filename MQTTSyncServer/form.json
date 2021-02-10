@@ -15,7 +15,7 @@
           "direction": "ascending"
         },
         "columns": [{
-          "caption": "ObjectID",
+          "caption": "Object",
           "name": "ObjectID",
           "width": "400px",
           "add": 0,
@@ -36,8 +36,31 @@
     ],
     "actions":
     [
-      { "type": "Button", "caption": "Send Configuration to Client", "onClick": "MQTTSync_sendConfiguration($id);" },
-      { "type": "Button", "caption": "Send Variablen Profiles to Client", "onClick": "MQTTSync_sendVariablenProfiles($id);" },
-      { "type": "Button", "caption": "Send Variables to Client", "onClick": "MQTTSync_sendVariablen($id);" }
+      { "type": "Button",
+        "caption": "Synchronize data",
+        "onClick": "MQTTSync_synchronizeData($id);"
+      },
+      {
+        "type": "ExpansionPanel",
+        "caption": "Expert Actions",
+        "items": [
+            { "type": "Button",
+              "caption": "Send Configuration to Client",
+              "onClick": "MQTTSync_sendConfiguration($id);"
+            },
+            { "type": "Button",
+              "caption": "Send Variablen Profiles to Client",
+              "onClick": "MQTTSync_sendVariablenProfiles($id);"
+            },
+            { "type": "Button",
+              "caption": "Send Variables to Client",
+              "onClick": "MQTTSync_sendVariablen($id);"
+            }
+        ]
+    }
+
+      
+      
+      
     ]
 }

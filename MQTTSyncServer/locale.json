@@ -4,6 +4,9 @@
       "State": "Status",
       "Devices": "Geräte",
       "ObjectID": "ObjektID",
+      "Object": "Objekt",
+      "Synchronize data": "Daten synchronisieren",
+      "Expert Actions": "Experten Aktionen",
       "Send Configuration to Client": "Sende Konfiguration zum Client",
       "Send Variablen Profiles to Client": "Sende Variablenprofile zum Client",
       "Send Variables to Client": "Sende Variablen zum Client"
