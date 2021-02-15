@@ -26,9 +26,9 @@ class MQTTSyncClientDevice extends IPSModule
         $Payload = [];
         $Payload['config'] = 'variables';
         $Topic = 'mqttsync/' . $this->ReadPropertyString('GroupTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '/get';
-        $this->sendMQTTCommand($Topic, $Payload);
-
-        //$this->SetReceiveDataFilter('.*' . $MQTTTopic . '.*');
+        if ($this->HasActiveParent()) {
+            $this->sendMQTTCommand($Topic, $Payload);
+        }
     }
 
     public function ReceiveData($JSONString)
