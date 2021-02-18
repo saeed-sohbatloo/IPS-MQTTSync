@@ -25,8 +25,7 @@
 ## 3. Konfiguration in IP-Symcon
 
 1. MQTTSyncServer auf Master IPS anlegen
-2. MQTTClient über den Module Store auf Slave IPS installieren
-3. MQTTSyncClientConfigurator auf Slave IPS installieren.
+2. MQTTSyncClientConfigurator auf Slave IPS installieren.
 
 Die Doku kann den einzelnen Instanzen entnommen werden.
 

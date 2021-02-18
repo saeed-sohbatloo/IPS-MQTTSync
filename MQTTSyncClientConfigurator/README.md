@@ -16,7 +16,7 @@
 
 * Als Parent wird der MQTT Client von Symcon benötigt, dieser muss so konfiguriert sein, dass er auf den MQTT server des Master IP-Symcons zugreift.
 * Das MQTT Topic ist das selbe Topic, welches bei dem MQTT Sync Server auf dem Master System hinterlegt ist.
-* Als letztes muss die Konfiguration von dem MQTT Sync Server übernommen werden, dazu muss auf dem IP-Symcon Master System in der Instanz MQTT Sync Server der Button "Sende Konfiguration zum Client" und der Button "Sende Variabeln Profile zum Client" im Actions Bereich ausgeführt werden.
+* Als letztes muss die Konfiguration von dem MQTT Sync Server übernommen werden, dazu muss auf dem IP-Symcon Master System in der Instanz MQTT Sync Server der Button "Daten synchronisieren" im Actions Bereich ausgeführt werden.
 * Nun sollte sich die Liste füllen und die Instanzen können über den Konfigurator angelegt werden.
 
 ## 3. Spenden
