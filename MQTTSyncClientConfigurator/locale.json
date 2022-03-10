@@ -1,11 +1,11 @@
 {
-  "translations": {
-    "de": {
-      "State": "Status",
-      "Devices": "Geräte",
-      "Remote ObjectID": "Remote ObjektID",
-      "Remote Object Name": "Remote Objekt Name",
-      "Object Type": "Objekt Typ"
+    "translations": {
+        "de": {
+            "State": "Status",
+            "Devices": "Geräte",
+            "Remote ObjectID": "Remote ObjektID",
+            "Remote Object Name": "Remote Objekt Name",
+            "Object Type": "Objekt Typ"
+        }
     }
-  }
 }

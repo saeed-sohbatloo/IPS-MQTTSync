@@ -1,11 +1,17 @@
 {
-	"id": "{87AE1CCF-5BE1-626A-EE1B-F966DAEA2E30}",
-	"name": "MQTTSyncClientConfigurator",
-	"type": 4,
-	"vendor": "",
-	"aliases": ["MQTT Sync Client Configurator"],
-	"parentRequirements": ["{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}"],
-	"childRequirements": [],
-	"implemented": ["{7F7632D9-FA40-4F38-8DEA-C83CD4325A32}"],
-	"prefix": "MQTTSYNC"
+    "id": "{87AE1CCF-5BE1-626A-EE1B-F966DAEA2E30}",
+    "name": "MQTTSyncClientConfigurator",
+    "type": 4,
+    "vendor": "",
+    "aliases": [
+        "MQTT Sync Client Configurator"
+    ],
+    "parentRequirements": [
+        "{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}"
+    ],
+    "childRequirements": [],
+    "implemented": [
+        "{7F7632D9-FA40-4F38-8DEA-C83CD4325A32}"
+    ],
+    "prefix": "MQTTSYNC"
 }
