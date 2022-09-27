@@ -136,7 +136,11 @@ class MQTTSyncServer extends IPSModule
                 } else {
                     $VariablenID = IPS_GetObjectIDByIdent($Payload->ObjectIdent, $ObjectID);
                 }
-                RequestAction($VariablenID, $Payload->Value);
+                if (HasAction($VariablenID)) {
+                    RequestAction($VariablenID, $Payload->Value);
+                } else {
+                    SetValue($VariablenID, $Payload->Value);
+                }
                 return;
             }
 
