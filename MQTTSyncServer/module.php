@@ -108,7 +108,7 @@ class MQTTSyncServer extends IPSModule
                         $this->SendMQTTData($Topic, $Payload);
                     }
                     if ($Topic == '') {
-                        $this->SendDebug(__FUNCTION__, 'Topic for Object ID: ' . $ObjectID . ' is not on list!', 0);
+                        $this->SendDebug(__FUNCTION__, 'Topic for Object ID: ' . $Object['ObjectID'] . ' is not on list!', 0);
                     }
                 }
             }
