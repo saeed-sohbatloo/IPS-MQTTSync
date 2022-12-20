@@ -36,6 +36,11 @@ class MQTTSyncClientDevice extends IPSModule
         $this->SendDebug('ReceiveData JSON', $JSONString, 0);
         $Data = json_decode($JSONString);
 
+        //Für MQTT Fix in IPS Version 6.3
+        if (IPS_GetKernelDate() > 1670886000) {
+            $Data->Payload = utf8_decode($Data->Payload);
+        }
+
         if (property_exists($Data, 'Topic')) {
             $Variablen = json_decode($Data->Payload);
             foreach ($Variablen as $Variable) {
