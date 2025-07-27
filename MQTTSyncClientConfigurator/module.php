@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 class MQTTSyncClientConfigurator extends IPSModule
 {
+    public function __construct($InstanceID)
+    {
+        parent::__construct($InstanceID);
+    }
+
     public function Create()
     {
         //Never delete this line!
