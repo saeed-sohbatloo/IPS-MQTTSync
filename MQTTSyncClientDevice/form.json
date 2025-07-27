@@ -43,10 +43,11 @@
           "tooltip": "Additional information about the device."
         },
         {
-          "type": "DatePicker",
+          "type": "ValidationTextBox",
           "name": "InstallationDate",
           "caption": "Installation Date",
-          "tooltip": "Date when the device was installed."
+          "placeholder": "YYYY-MM-DD",
+          "tooltip": "Enter date in the format YYYY-MM-DD"
         },
         {
           "type": "CheckBox",
@@ -59,15 +60,6 @@
     {
       "type": "Label",
       "caption": "Dieses Modul ist für die nicht kommerzielle Nutzung kostenlos. Schenkungen als Unterstützung für den Autor werden hier akzeptiert:"
-    },
-    {
-      "type": "RowLayout",
-      "items": [
-        {
-          "type": "Label",
-          "caption": ""
-        }
-      ]
     }
   ],
   "actions": [],
