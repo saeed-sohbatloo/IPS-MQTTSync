@@ -38,8 +38,6 @@ class MQTTSyncServer extends IPSModule
             $this->SendDebug('ReceiveData', 'Invalid payload JSON', 0);
             return;
         }
-
-        // Optional: Handle received data here
     }
 
     protected function SendMQTT(string $topic, string $payload, bool $retain = false)
@@ -62,11 +60,10 @@ class MQTTSyncServer extends IPSModule
         $this->SendDebug('sendConfigurationToClient', 'Start', 0);
 
         $devices = json_decode($this->ReadPropertyString('Devices'), true);
-        $groupTopic = $this->ReadPropertyString('GroupTopic');
         $retain = $this->ReadPropertyBoolean('Retain');
 
         foreach ($devices as $device) {
-            if (!isset($device['MQTTTopic']) || !isset($device['ObjectID'])) {
+            if (!isset($device['MQTTTopic'])) {
                 continue;
             }
 
@@ -87,7 +84,7 @@ class MQTTSyncServer extends IPSModule
     public function sendProfilesToClient()
     {
         $this->SendDebug('sendProfilesToClient', 'Start', 0);
-        // For now, just send debug message. You can extend this to send variable profiles.
+        // Implement profile sending logic if needed
         $this->SendDebug('sendProfilesToClient', 'Done', 0);
     }
 
@@ -119,7 +116,6 @@ class MQTTSyncServer extends IPSModule
     public function synchronizeData()
     {
         $this->SendDebug('synchronizeData', 'Start', 0);
-        // You can extend this to do a full sync of everything
         $this->sendConfigurationToClient();
         $this->sendProfilesToClient();
         $this->sendVariablesToClient();
