@@ -6,16 +6,18 @@
       "items": [
         {
           "type": "ValidationTextBox",
-          "name": "MQTTTopic",
-          "caption": "MQTT Topic",
-          "default": "symcon/stm",
-          "required": true
+          "name": "GroupTopic",
+          "caption": "MQTT Group Topic",
+          "default": "symcon/group",
+          "required": true,
+          "tooltip": "Topic group for all devices"
         },
         {
           "type": "CheckBox",
           "name": "Retain",
-          "caption": "Retain",
-          "default": false
+          "caption": "Retain Flag",
+          "default": false,
+          "tooltip": "Retain MQTT messages"
         }
       ]
     },
@@ -31,36 +33,30 @@
           "delete": true,
           "columns": [
             {
-              "caption": "Object",
+              "caption": "ObjectID",
               "name": "ObjectID",
-              "width": "200px",
+              "width": "100px",
               "add": true,
-              "edit": {
-                "type": "SelectObject"
-              }
+              "edit": { "type": "SelectObject" }
             },
             {
               "caption": "MQTT Topic",
               "name": "MQTTTopic",
               "width": "200px",
               "add": true,
-              "edit": {
-                "type": "ValidationTextBox"
-              }
+              "edit": { "type": "ValidationTextBox" }
             },
             {
               "caption": "Name",
               "name": "Name",
               "width": "150px",
               "add": true,
-              "edit": {
-                "type": "ValidationTextBox"
-              }
+              "edit": { "type": "ValidationTextBox" }
             },
             {
               "caption": "Type",
               "name": "Type",
-              "width": "120px",
+              "width": "100px",
               "add": true,
               "edit": {
                 "type": "Select",
@@ -74,11 +70,9 @@
             {
               "caption": "Active",
               "name": "Active",
-              "width": "80px",
+              "width": "70px",
               "add": true,
-              "edit": {
-                "type": "CheckBox"
-              }
+              "edit": { "type": "CheckBox" }
             }
           ]
         }
@@ -90,7 +84,7 @@
       "items": [
         {
           "type": "Button",
-          "label": "Synchronize data",
+          "label": "Synchronize Data",
           "onClick": "synchronizeData"
         },
         {
@@ -111,6 +105,5 @@
       ]
     }
   ],
-  "actions": [],
-  "status": []
+  "actions": []
 }
