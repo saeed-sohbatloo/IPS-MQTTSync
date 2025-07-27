@@ -36,7 +36,7 @@
           "tooltip": "Area covered by the device in square meters."
         },
         {
-          "type": "TextArea",
+          "type": "ValidationTextBox",
           "name": "Description",
           "caption": "Description",
           "placeholder": "Add any notes or description...",
