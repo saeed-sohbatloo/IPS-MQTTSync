@@ -2,119 +2,49 @@
 
 declare(strict_types=1);
 
+// MQTTSyncClientConfigurator: Manages a group of MQTT devices in IP-Symcon
 class MQTTSyncClientConfigurator extends IPSModule
 {
-    public function __construct($InstanceID)
-    {
-        parent::__construct($InstanceID);
-    }
-
+    // Called once when the instance is created
     public function Create()
     {
-        //Never delete this line!
         parent::Create();
-        $this->ConnectParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
-        $this->RegisterPropertyString('GroupTopic', 'symcon');
-        $this->RegisterAttributeString('Devices', '[]');
+        // Register properties for group topic and device list
+        $this->RegisterPropertyString('GroupTopic', ''); // Group topic for all devices
+        $this->RegisterPropertyString('Devices', '[]'); // JSON array of device configs
     }
 
-    public function GetConfigurationForm()
-    {
-        $Form = json_decode(file_get_contents(__DIR__ . '/form.json'), true);
-        $Devices = $this->ReadAttributeString('Devices');
-
-        $Values = [];
-        $Devices = json_decode($Devices);
-
-        foreach ($Devices as $Device) {
-            $instanceID = $this->getMQTTSyncClientDeviceInstance($Device->MQTTTopic);
-
-            $tmpDevice = [];
-            $tmpDevice = [
-                'ObjectID'      => $Device->ObjectID,
-                'ObjectName'    => $Device->ObjectName,
-                'MQTTTopic'     => $Device->MQTTTopic,
-                'ObjectType'    => $Device->ObjectType,
-                'name'          => $Device->ObjectName . ' (' . $Device->MQTTTopic . ')',
-                'instanceID'    => $instanceID
-
-            ];
-            $tmpDevice['create'] = [
-                'moduleID'      => '{F6B7EB9F-7624-1026-44C1-9AF4059C26ED}',
-                'configuration' => [
-                    'GroupTopic'   => $this->ReadPropertyString('GroupTopic'),
-                    'MQTTTopic'    => $Device->MQTTTopic,
-                ],
-            ];
-
-            $Values[] = $tmpDevice;
-        }
-
-        $Form['actions'][0]['values'] = $Values;
-        return json_encode($Form);
-    }
-
+    // Called whenever properties are changed or instance is loaded
     public function ApplyChanges()
     {
-        //Never delete this line!
         parent::ApplyChanges();
-        $this->ConnectParent('{EE0D345A-CF31-428A-A613-33CE98E752DD}');
-
-        $MQTTTopic = $this->ReadPropertyString('GroupTopic');
-        $this->SetReceiveDataFilter('.*' . $MQTTTopic . '.*');
+        // Set up MQTT receive filter for this group
+        $group = $this->ReadPropertyString('GroupTopic');
+        $this->SetReceiveDataFilter('.*mqttsync/' . $group . '.*');
     }
 
+    // Handles incoming MQTT data
     public function ReceiveData($JSONString)
     {
-        $this->SendDebug('ReceiveData JSON', $JSONString, 0);
-        $Data = json_decode($JSONString);
-
-        //Für MQTT Fix in IPS Version 6.3
-        if (IPS_GetKernelDate() > 1670886000) {
-            $Data->Payload = utf8_decode($Data->Payload);
+        $this->SendDebug('ReceiveData', $JSONString, 0);
+        $data = json_decode($JSONString);
+        if (!isset($data->Topic) || !isset($data->Payload)) {
+            $this->SendDebug('ReceiveData', 'Invalid data structure', 0);
+            return;
         }
-
-        if (property_exists($Data, 'Topic')) {
-            $arrTopic = explode('/', $Data->Topic);
-            $CountItems = count($arrTopic);
-            $Topic = $arrTopic[array_key_last($arrTopic)];
-            if ($Topic == 'Configuration') {
-                $Devices = json_decode($Data->Payload);
-                IPS_LogMessage('Devices', 'test');
-                $this->WriteAttributeString('Devices', $Data->Payload);
-                $this->UpdateFormField('Devices', 'values', $Data->Payload);
-
-                $this->SendDebug(__FUNCTION__, 'Topic: ' . 'Configuration ', 0);
-            }
-            if ($Topic == 'VariablenProfiles') {
-                $Profiles = json_decode($Data->Payload, true);
-
-                foreach ($Profiles as $Profile) {
-                    $profileName = $Profile['ProfileName'];
-
-                    IPS_CreateVariableProfile($profileName, $Profile['ProfileType']);
-                    IPS_SetVariableProfileText($profileName, $Profile['Prefix'], $Profile['Suffix']);
-                    IPS_SetVariableProfileValues($profileName, $Profile['MinValue'], $Profile['MaxValue'], $Profile['StepSize']);
-                    IPS_SetVariableProfileDigits($profileName, $Profile['Digits']);
-                    IPS_SetVariableProfileIcon($profileName, $Profile['Icon']);
-                    foreach ($Profile['Associations'] as $association) {
-                        IPS_SetVariableProfileAssociation($profileName, $association['Value'], $association['Name'], $association['Icon'], $association['Color']);
-                    }
-                }
+        // Example: handle incoming payload (extend as needed)
+        $payload = json_decode($data->Payload, true);
+        if (is_array($payload)) {
+            // Example: log received values
+            foreach ($payload as $key => $value) {
+                $this->SendDebug('Payload', $key . ': ' . print_r($value, true), 0);
             }
         }
     }
 
-    private function getMQTTSyncClientDeviceInstance($Topic)
+    // Example method to update device list (extend as needed)
+    protected function UpdateDeviceList(array $devices)
     {
-        $InstanceIDs = IPS_GetInstanceListByModuleID('{F6B7EB9F-7624-1026-44C1-9AF4059C26ED}'); //MQTTSyncClientDevice
-        foreach ($InstanceIDs as $id) {
-            if (IPS_GetProperty($id, 'MQTTTopic') == $Topic) {
-                if (IPS_GetInstance($id)['ConnectionID'] == IPS_GetInstance($this->InstanceID)['ConnectionID']) {
-                    return $id;
-                }
-            }
-        }
-        return 0;
+        $this->SetBuffer('Devices', json_encode($devices));
     }
 }

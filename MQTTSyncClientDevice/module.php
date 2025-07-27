@@ -2,131 +2,82 @@
 
 declare(strict_types=1);
 
+// MQTTSyncClientDevice: Represents a single MQTT-enabled device in IP-Symcon
 class MQTTSyncClientDevice extends IPSModule
 {
-    public function __construct($InstanceID)
-    {
-        parent::__construct($InstanceID);
-    }
-
+    // Called once when the instance is created
     public function Create()
     {
-        //Never delete this line!
         parent::Create();
-        $this->ConnectParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
-        $this->RegisterPropertyString('MQTTTopic', '');
-        $this->RegisterPropertyString('GroupTopic', '');
-        // Register new properties for enhanced device information
-        $this->RegisterPropertyString('Location', ''); // English: Physical location of the device
-        $this->RegisterPropertyInteger('Area', 0); // English: Area in square meters
-        $this->RegisterPropertyString('Description', ''); // English: Additional notes
-        $this->RegisterPropertyString('InstallationDate', ''); // English: Installation date (string for simplicity)
-        $this->RegisterPropertyBoolean('IsActive', true); // English: Device active status
+        // Register all device properties
+        $this->RegisterPropertyString('MQTTTopic', ''); // Unique topic for this device
+        $this->RegisterPropertyString('GroupTopic', ''); // Group topic for device grouping
+        $this->RegisterPropertyString('Location', ''); // Physical location of the device
+        $this->RegisterPropertyInteger('Area', 0); // Area in square meters
+        $this->RegisterPropertyString('Description', ''); // Additional notes
+        $this->RegisterPropertyString('InstallationDate', ''); // Installation date (string)
+        $this->RegisterPropertyBoolean('IsActive', true); // Device active status
     }
 
+    // Called whenever properties are changed or instance is loaded
     public function ApplyChanges()
     {
-        //Never delete this line!
         parent::ApplyChanges();
-        $this->ConnectParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
-
-        $GroupTopic = $this->ReadPropertyString('GroupTopic');
-        $MQTTTopic = $this->ReadPropertyString('MQTTTopic');
-        $this->SetReceiveDataFilter('.*mqttsync/' . $GroupTopic . '/' . $MQTTTopic . '".*');
-
-        // Prepare enhanced payload with new fields
-        $Payload = [];
-        $Payload['config'] = 'variables';
-        // Add new device info fields to the payload for richer MQTT messages
-        $Payload['Location'] = $this->ReadPropertyString('Location');
-        $Payload['Area'] = $this->ReadPropertyInteger('Area');
-        $Payload['Description'] = $this->ReadPropertyString('Description');
-        $Payload['InstallationDate'] = $this->ReadPropertyString('InstallationDate');
-        $Payload['IsActive'] = $this->ReadPropertyBoolean('IsActive');
-        $Topic = 'mqttsync/' . $GroupTopic . '/' . $MQTTTopic . '/get';
-        if ($this->HasActiveParent()) {
-            $this->sendMQTTCommand($Topic, $Payload);
-        }
+        // Set up MQTT receive filter for this device
+        $group = $this->ReadPropertyString('GroupTopic');
+        $topic = $this->ReadPropertyString('MQTTTopic');
+        $this->SetReceiveDataFilter('.*mqttsync/' . $group . '/' . $topic . '.*');
     }
 
+    // Handles incoming MQTT data
     public function ReceiveData($JSONString)
     {
-        $this->SendDebug('ReceiveData JSON', $JSONString, 0);
-        $Data = json_decode($JSONString);
-
-        //Für MQTT Fix in IPS Version 6.3
-        if (IPS_GetKernelDate() > 1670886000) {
-            $Data->Payload = utf8_decode($Data->Payload);
+        $this->SendDebug('ReceiveData', $JSONString, 0);
+        $data = json_decode($JSONString);
+        if (!isset($data->Topic) || !isset($data->Payload)) {
+            $this->SendDebug('ReceiveData', 'Invalid data structure', 0);
+            return;
         }
-
-        if (property_exists($Data, 'Topic')) {
-            $Variablen = json_decode($Data->Payload);
-            foreach ($Variablen as $Variable) {
-                if ($Variable->ObjectIdent == '') {
-                    $ObjectIdent = $Variable->ID;
-                } else {
-                    $ObjectIdent = $Variable->ObjectIdent;
-                }
-
-                if ($Variable->VariableCustomProfile != '') {
-                    $VariableProfile = $Variable->VariableCustomProfile;
-                } else {
-                    $VariableProfile = $Variable->VariableProfile;
-                }
-                $ID = $this->GetIDForIdent($ObjectIdent);
-                if (!$ID) {
-                    switch ($Variable->VariableTyp) {
-                        case 0:
-                            $this->RegisterVariableBoolean($ObjectIdent, $Variable->Name, $VariableProfile);
-                            break;
-                        case 1:
-                            $this->RegisterVariableInteger($ObjectIdent, $Variable->Name, $VariableProfile);
-                            break;
-                        case 2:
-                            $this->RegisterVariableFloat($ObjectIdent, $Variable->Name, $VariableProfile);
-                            break;
-                        case 3:
-                            $this->RegisterVariableString($ObjectIdent, $Variable->Name, $VariableProfile);
-                            break;
-                        default:
-                            IPS_LogMessage('MQTTSync Client', 'invalid variablen profile');
-                            break;
-                    }
-                    if ($Variable->VariableAction != 0 || $Variable->VariableCustomAction != 0) {
-                        $this->EnableAction($ObjectIdent);
-                    }
-                }
-                $this->SendDebug('Value for ' . $ObjectIdent . ':', $Variable->Value, 0);
-                $this->SetValue($ObjectIdent, $Variable->Value);
+        // Example: handle incoming payload (extend as needed)
+        $payload = json_decode($data->Payload, true);
+        if (is_array($payload)) {
+            // Example: log received values
+            foreach ($payload as $key => $value) {
+                $this->SendDebug('Payload', $key . ': ' . print_r($value, true), 0);
             }
         }
     }
 
-    public function RequestAction($Ident, $Value)
+    // Sends a custom MQTT message with all device info
+    protected function SendDeviceInfoMQTT()
     {
-        $Payload = [];
-        $Payload['ObjectIdent'] = $Ident;
-        $Payload['Value'] = $Value;
-        // Add new device info fields to the set message as well
-        $Payload['Location'] = $this->ReadPropertyString('Location');
-        $Payload['Area'] = $this->ReadPropertyInteger('Area');
-        $Payload['Description'] = $this->ReadPropertyString('Description');
-        $Payload['InstallationDate'] = $this->ReadPropertyString('InstallationDate');
-        $Payload['IsActive'] = $this->ReadPropertyBoolean('IsActive');
-        $Topic = 'mqttsync/' . $this->ReadPropertyString('GroupTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '/set';
-        $this->sendMQTTCommand($Topic, $Payload);
+        $payload = [
+            'MQTTTopic' => $this->ReadPropertyString('MQTTTopic'),
+            'GroupTopic' => $this->ReadPropertyString('GroupTopic'),
+            'Location' => $this->ReadPropertyString('Location'),
+            'Area' => $this->ReadPropertyInteger('Area'),
+            'Description' => $this->ReadPropertyString('Description'),
+            'InstallationDate' => $this->ReadPropertyString('InstallationDate'),
+            'IsActive' => $this->ReadPropertyBoolean('IsActive')
+        ];
+        $topic = 'mqttsync/' . $payload['GroupTopic'] . '/' . $payload['MQTTTopic'] . '/info';
+        $this->SendMQTT($topic, json_encode($payload));
     }
 
-    protected function sendMQTTCommand($topic, $payload, $retain = false)
+    // Helper to send MQTT messages via parent
+    protected function SendMQTT(string $topic, string $payload, bool $retain = false)
     {
-        $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
-        $Data['PacketType'] = 3;
-        $Data['QualityOfService'] = 0;
-        $Data['Retain'] = $retain;
-        $Data['Topic'] = $topic;
-        $Data['Payload'] = json_encode($payload);
-        $DataJSON = json_encode($Data, JSON_UNESCAPED_SLASHES);
-        $this->SendDebug(__FUNCTION__ . 'MQTT Publish', $DataJSON, 0);
-        $resultServer = $this->SendDataToParent($DataJSON);
+        // Prepare data for IP-Symcon MQTT parent
+        $Data = [
+            'DataID' => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
+            'PacketType' => 3, // PUBLISH
+            'QualityOfService' => 0,
+            'Retain' => $retain,
+            'Topic' => $topic,
+            'Payload' => $payload
+        ];
+        $DataJSON = json_encode($Data);
+        $this->SendDebug('SendMQTT', $DataJSON, 0);
+        $this->SendDataToParent($DataJSON);
     }
 }
