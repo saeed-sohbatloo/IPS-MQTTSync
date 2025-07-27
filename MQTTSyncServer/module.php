@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+echo "Module File Loaded Successfully\n";
 
 // MQTTSyncServer: Handles MQTT server-side logic in IP-Symcon
 class MQTTSyncServer extends IPSModule
