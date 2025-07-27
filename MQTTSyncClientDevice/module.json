@@ -7,10 +7,7 @@
         "MQTT Sync Client Device by saeed sohbatloo"
     ],
     "parentRequirements": [
-        {
-            "moduleID": "{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}"
-          
-        }
+        "{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}"
     ],
     "childRequirements": [],
     "implemented": [],
