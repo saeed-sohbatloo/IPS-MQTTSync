@@ -5,6 +5,13 @@ declare(strict_types=1);
 // MQTTSyncServer: Handles MQTT server-side logic in IP-Symcon
 class MQTTSyncServer extends IPSModule
 {
+    // Constructor: Always receives $InstanceID in IP-Symcon
+    public function __construct($InstanceID)
+    {
+        // Call parent constructor with InstanceID
+        parent::__construct($InstanceID);
+    }
+
     // Called once when the instance is created
     public function Create()
     {
