@@ -11,6 +11,12 @@ class MQTTSyncClientDevice extends IPSModule
         $this->ConnectParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
         $this->RegisterPropertyString('MQTTTopic', '');
         $this->RegisterPropertyString('GroupTopic', '');
+        // Register new properties for enhanced device information
+        $this->RegisterPropertyString('Location', ''); // English: Physical location of the device
+        $this->RegisterPropertyInteger('Area', 0); // English: Area in square meters
+        $this->RegisterPropertyString('Description', ''); // English: Additional notes
+        $this->RegisterPropertyString('InstallationDate', ''); // English: Installation date (string for simplicity)
+        $this->RegisterPropertyBoolean('IsActive', true); // English: Device active status
     }
 
     public function ApplyChanges()
@@ -23,9 +29,16 @@ class MQTTSyncClientDevice extends IPSModule
         $MQTTTopic = $this->ReadPropertyString('MQTTTopic');
         $this->SetReceiveDataFilter('.*mqttsync/' . $GroupTopic . '/' . $MQTTTopic . '".*');
 
+        // Prepare enhanced payload with new fields
         $Payload = [];
         $Payload['config'] = 'variables';
-        $Topic = 'mqttsync/' . $this->ReadPropertyString('GroupTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '/get';
+        // Add new device info fields to the payload for richer MQTT messages
+        $Payload['Location'] = $this->ReadPropertyString('Location');
+        $Payload['Area'] = $this->ReadPropertyInteger('Area');
+        $Payload['Description'] = $this->ReadPropertyString('Description');
+        $Payload['InstallationDate'] = $this->ReadPropertyString('InstallationDate');
+        $Payload['IsActive'] = $this->ReadPropertyBoolean('IsActive');
+        $Topic = 'mqttsync/' . $GroupTopic . '/' . $MQTTTopic . '/get';
         if ($this->HasActiveParent()) {
             $this->sendMQTTCommand($Topic, $Payload);
         }
@@ -89,6 +102,12 @@ class MQTTSyncClientDevice extends IPSModule
         $Payload = [];
         $Payload['ObjectIdent'] = $Ident;
         $Payload['Value'] = $Value;
+        // Add new device info fields to the set message as well
+        $Payload['Location'] = $this->ReadPropertyString('Location');
+        $Payload['Area'] = $this->ReadPropertyInteger('Area');
+        $Payload['Description'] = $this->ReadPropertyString('Description');
+        $Payload['InstallationDate'] = $this->ReadPropertyString('InstallationDate');
+        $Payload['IsActive'] = $this->ReadPropertyBoolean('IsActive');
         $Topic = 'mqttsync/' . $this->ReadPropertyString('GroupTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '/set';
         $this->sendMQTTCommand($Topic, $Payload);
     }
