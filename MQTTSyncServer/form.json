@@ -1,112 +1,116 @@
-[
-  {
-    "type": "ExpansionPanel",
-    "caption": "MQTT Settings",
-    "items": [
-      {
-        "type": "ValidationTextBox",
-        "name": "MQTTTopic",
-        "caption": "MQTT Topic",
-        "default": "symcon/stm",
-        "required": true
-      },
-      {
-        "type": "CheckBox",
-        "name": "Retain",
-        "caption": "Retain",
-        "default": false
-      }
-    ]
-  },
-  {
-    "type": "ExpansionPanel",
-    "caption": "Devices Configuration",
-    "items": [
-      {
-        "type": "List",
-        "name": "Devices",
-        "caption": "Devices",
-        "add": true,
-        "delete": true,
-        "columns": [
-          {
-            "caption": "Object",
-            "name": "ObjectID",
-            "width": "200px",
-            "add": true,
-            "edit": {
-              "type": "SelectObject"
+{
+  "elements": [
+    {
+      "type": "ExpansionPanel",
+      "caption": "MQTT Settings",
+      "items": [
+        {
+          "type": "ValidationTextBox",
+          "name": "MQTTTopic",
+          "caption": "MQTT Topic",
+          "default": "symcon/stm",
+          "required": true
+        },
+        {
+          "type": "CheckBox",
+          "name": "Retain",
+          "caption": "Retain",
+          "default": false
+        }
+      ]
+    },
+    {
+      "type": "ExpansionPanel",
+      "caption": "Devices Configuration",
+      "items": [
+        {
+          "type": "List",
+          "name": "Devices",
+          "caption": "Devices",
+          "add": true,
+          "delete": true,
+          "columns": [
+            {
+              "caption": "Object",
+              "name": "ObjectID",
+              "width": "200px",
+              "add": true,
+              "edit": {
+                "type": "SelectObject"
+              }
+            },
+            {
+              "caption": "MQTT Topic",
+              "name": "MQTTTopic",
+              "width": "200px",
+              "add": true,
+              "edit": {
+                "type": "ValidationTextBox"
+              }
+            },
+            {
+              "caption": "Name",
+              "name": "Name",
+              "width": "150px",
+              "add": true,
+              "edit": {
+                "type": "ValidationTextBox"
+              }
+            },
+            {
+              "caption": "Type",
+              "name": "Type",
+              "width": "120px",
+              "add": true,
+              "edit": {
+                "type": "Select",
+                "options": [
+                  { "caption": "Sensor", "value": "sensor" },
+                  { "caption": "Actuator", "value": "actuator" },
+                  { "caption": "Other", "value": "other" }
+                ]
+              }
+            },
+            {
+              "caption": "Active",
+              "name": "Active",
+              "width": "80px",
+              "add": true,
+              "edit": {
+                "type": "CheckBox"
+              }
             }
-          },
-          {
-            "caption": "MQTT Topic",
-            "name": "MQTTTopic",
-            "width": "200px",
-            "add": true,
-            "edit": {
-              "type": "ValidationTextBox"
-            }
-          },
-          {
-            "caption": "Name",
-            "name": "Name",
-            "width": "150px",
-            "add": true,
-            "edit": {
-              "type": "ValidationTextBox"
-            }
-          },
-          {
-            "caption": "Type",
-            "name": "Type",
-            "width": "120px",
-            "add": true,
-            "edit": {
-              "type": "Select",
-              "options": [
-                { "caption": "Sensor", "value": "sensor" },
-                { "caption": "Actuator", "value": "actuator" },
-                { "caption": "Other", "value": "other" }
-              ]
-            }
-          },
-          {
-            "caption": "Active",
-            "name": "Active",
-            "width": "80px",
-            "add": true,
-            "edit": {
-              "type": "CheckBox"
-            }
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "type": "ExpansionPanel",
-    "caption": "Actions",
-    "items": [
-      {
-        "type": "Button",
-        "label": "Synchronize data",
-        "onClick": "synchronizeData"
-      },
-      {
-        "type": "Button",
-        "label": "Send Configuration to Client",
-        "onClick": "sendConfigurationToClient"
-      },
-      {
-        "type": "Button",
-        "label": "Send Variable Profiles to Client",
-        "onClick": "sendProfilesToClient"
-      },
-      {
-        "type": "Button",
-        "label": "Send Variables to Client",
-        "onClick": "sendVariablesToClient"
-      }
-    ]
-  }
-]
+          ]
+        }
+      ]
+    },
+    {
+      "type": "ExpansionPanel",
+      "caption": "Actions",
+      "items": [
+        {
+          "type": "Button",
+          "label": "Synchronize data",
+          "onClick": "synchronizeData"
+        },
+        {
+          "type": "Button",
+          "label": "Send Configuration to Client",
+          "onClick": "sendConfigurationToClient"
+        },
+        {
+          "type": "Button",
+          "label": "Send Variable Profiles to Client",
+          "onClick": "sendProfilesToClient"
+        },
+        {
+          "type": "Button",
+          "label": "Send Variables to Client",
+          "onClick": "sendVariablesToClient"
+        }
+      ]
+    }
+  ],
+  "actions": [],
+  "status": []
+}
