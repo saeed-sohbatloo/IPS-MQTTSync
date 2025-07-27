@@ -1,74 +1,75 @@
 {
-    "elements": [
+  "elements": [
+    {
+      "type": "ExpansionPanel",
+      "caption": "Device Information",
+      "items": [
         {
-            "type": "GroupBox",
-            "caption": "Device Information",
-            "items": [
-                {
-                    "type": "ValidationTextBox",
-                    "name": "GroupTopic",
-                    "caption": "MQTT Group Topic",
-                    "placeholder": "Enter group topic...",
-                    "tooltip": "The MQTT group this device belongs to."
-                },
-                {
-                    "type": "ValidationTextBox",
-                    "name": "MQTTTopic",
-                    "caption": "MQTT Topic",
-                    "placeholder": "Enter device topic...",
-                    "tooltip": "Unique topic for this device."
-                },
-                {
-                    "type": "ValidationTextBox",
-                    "name": "Location",
-                    "caption": "Location",
-                    "placeholder": "e.g. Living Room",
-                    "tooltip": "Physical location of the device."
-                },
-                {
-                    "type": "NumberSpinner",
-                    "name": "Area",
-                    "caption": "Area (m²)",
-                    "minimum": 0,
-                    "maximum": 10000,
-                    "step": 1,
-                    "placeholder": "e.g. 25",
-                    "tooltip": "Area covered by the device in square meters."
-                },
-                {
-                    "type": "TextArea",
-                    "name": "Description",
-                    "caption": "Description",
-                    "placeholder": "Add any notes or description...",
-                    "tooltip": "Additional information about the device."
-                },
-                {
-                    "type": "DatePicker",
-                    "name": "InstallationDate",
-                    "caption": "Installation Date",
-                    "tooltip": "Date when the device was installed."
-                },
-                {
-                    "type": "CheckBox",
-                    "name": "IsActive",
-                    "caption": "Active",
-                    "tooltip": "Check if the device is currently active."
-                }
-            ]
+          "type": "ValidationTextBox",
+          "name": "GroupTopic",
+          "caption": "MQTT Group Topic",
+          "placeholder": "Enter group topic...",
+          "tooltip": "The MQTT group this device belongs to."
         },
         {
-            "type": "Label",
-            "caption": "Dieses Modul ist für die nicht kommerzielle Nutzung kostenlos, Schenkungen als Unterstützung für den Autor werden hier akzeptiert:    "
+          "type": "ValidationTextBox",
+          "name": "MQTTTopic",
+          "caption": "MQTT Topic",
+          "placeholder": "Enter device topic...",
+          "tooltip": "Unique topic for this device."
         },
         {
-            "type": "RowLayout",
-            "items": [
-                {
-                    "type": "Label",
-                    "caption": ""
-                }
-            ]
+          "type": "ValidationTextBox",
+          "name": "Location",
+          "caption": "Location",
+          "placeholder": "e.g. Living Room",
+          "tooltip": "Physical location of the device."
+        },
+        {
+          "type": "NumberSpinner",
+          "name": "Area",
+          "caption": "Area (m²)",
+          "minimum": 0,
+          "maximum": 10000,
+          "step": 1,
+          "placeholder": "e.g. 25",
+          "tooltip": "Area covered by the device in square meters."
+        },
+        {
+          "type": "TextArea",
+          "name": "Description",
+          "caption": "Description",
+          "placeholder": "Add any notes or description...",
+          "tooltip": "Additional information about the device."
+        },
+        {
+          "type": "DatePicker",
+          "name": "InstallationDate",
+          "caption": "Installation Date",
+          "tooltip": "Date when the device was installed."
+        },
+        {
+          "type": "CheckBox",
+          "name": "IsActive",
+          "caption": "Active",
+          "tooltip": "Check if the device is currently active."
         }
-    ],
-    "actions": []
+      ]
+    },
+    {
+      "type": "Label",
+      "caption": "Dieses Modul ist für die nicht kommerzielle Nutzung kostenlos. Schenkungen als Unterstützung für den Autor werden hier akzeptiert:"
+    },
+    {
+      "type": "RowLayout",
+      "items": [
+        {
+          "type": "Label",
+          "caption": ""
+        }
+      ]
+    }
+  ],
+  "actions": [],
+  "status": []
 }
