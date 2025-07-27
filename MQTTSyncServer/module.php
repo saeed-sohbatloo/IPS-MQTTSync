@@ -5,30 +5,25 @@ declare(strict_types=1);
 // MQTTSyncServer: Handles MQTT server-side logic in IP-Symcon
 class MQTTSyncServer extends IPSModule
 {
-    // Called once when the instance is created
     public function Create()
     {
         parent::Create();
-        // Register properties for group topic, retain flag, and device list
-        $this->RegisterPropertyString('GroupTopic', ''); // Group topic for all devices
-        $this->RegisterPropertyBoolean('Retain', false); // MQTT retain flag
-        $this->RegisterPropertyString('Devices', '[]'); // JSON array of device configs
+        $this->RegisterPropertyString('GroupTopic', '');
+        $this->RegisterPropertyBoolean('Retain', false);
+        $this->RegisterPropertyString('Devices', '[]');
     }
 
-    // Called whenever properties are changed or instance is loaded
     public function ApplyChanges()
     {
         parent::ApplyChanges();
-        // Set up MQTT receive filter for this group
         $group = $this->ReadPropertyString('GroupTopic');
         if ($group === '') {
-            $this->SetReceiveDataFilter('^$'); // No filter if group is empty
+            $this->SetReceiveDataFilter('^$');
         } else {
-            $this->SetReceiveDataFilter('.*mqttsync/' . preg_quote($group, '/') . '.*'); // Filter for group topic
+            $this->SetReceiveDataFilter('.*mqttsync/' . preg_quote($group, '/') . '.*');
         }
     }
 
-    // Handles incoming MQTT data
     public function ReceiveData($JSONString)
     {
         $this->SendDebug('ReceiveData', $JSONString, 0);
@@ -42,16 +37,13 @@ class MQTTSyncServer extends IPSModule
             $this->SendDebug('ReceiveData', 'Invalid payload JSON', 0);
             return;
         }
-        // Add your custom processing here if needed
     }
 
-    // Helper to send MQTT messages via parent
     protected function SendMQTT(string $topic, string $payload, bool $retain = false)
     {
-        // Prepare data for IP-Symcon MQTT parent
         $Data = [
             'DataID' => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
-            'PacketType' => 3, // PUBLISH
+            'PacketType' => 3,
             'QualityOfService' => 0,
             'Retain' => $retain,
             'Topic' => $topic,
@@ -60,5 +52,31 @@ class MQTTSyncServer extends IPSModule
         $DataJSON = json_encode($Data);
         $this->SendDebug('SendMQTT', $DataJSON, 0);
         $this->SendDataToParent($DataJSON);
+    }
+
+    // ✅ desired form format
+    public function sendConfigurationToClient()
+    {
+        $this->SendDebug('sendConfigurationToClient', 'Configuration sending started', 0);
+
+        $devices = json_decode($this->ReadPropertyString('Devices'), true);
+        $groupTopic = $this->ReadPropertyString('GroupTopic');
+        $retain = $this->ReadPropertyBoolean('Retain');
+
+        foreach ($devices as $device) {
+            $payload = json_encode([
+                'name' => $device['Name'] ?? '',
+                'location' => $device['Location'] ?? '',
+                'area' => $device['Area'] ?? 0,
+                'description' => $device['Description'] ?? '',
+                'type' => $device['Type'] ?? 'sensor'
+            ]);
+            $topic = $device['MQTTTopic'] ?? '';
+            if ($topic !== '') {
+                $this->SendMQTT($topic, $payload, $retain);
+            }
+        }
+
+        $this->SendDebug('sendConfigurationToClient', 'Configuration sending finished', 0);
     }
 }
