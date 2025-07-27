@@ -1,27 +1,27 @@
 {
-    "id": "{A1B2C3D4-E5F6-7890-1234-56789ABCDEF0}",
+    "id": "{A2B3C4D5-E6F7-8901-2345-6789ABCDEF01}",
     "author": "saeed sohbatloo",
-    "name": "MQTTSync-Custom",
+    "name": "MQTTSync",
     "url": "https://github.com/saeed-sohbatloo/IPS-MQTTSync",
-    "version": "1.1.2",
-    "build": 0,
-    "date": 0,
+    "version": "2.0.0",
+    "build": 1,
+    "date": 20240601,
     "modules": [
         {
             "id": "{11111111-2222-3333-4444-555555555555}",
-            "name": "MQTTSyncClientDevice-Custom",
+            "name": "MQTTSyncClientDevice",
             "type": 3,
             "location": "MQTTSyncClientDevice"
         },
         {
             "id": "{66666666-7777-8888-9999-AAAAAAAAAAAA}",
-            "name": "MQTTSyncClientConfigurator-Custom",
+            "name": "MQTTSyncClientConfigurator",
             "type": 3,
             "location": "MQTTSyncClientConfigurator"
         },
         {
             "id": "{BBBBBBBB-CCCC-DDDD-EEEE-FFFFFFFFFFFF}",
-            "name": "MQTTSyncServer-Custom",
+            "name": "MQTTSyncServer",
             "type": 3,
             "location": "MQTTSyncServer"
         }

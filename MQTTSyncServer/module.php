@@ -21,7 +21,11 @@ class MQTTSyncServer extends IPSModule
         parent::ApplyChanges();
         // Set up MQTT receive filter for this group
         $group = $this->ReadPropertyString('GroupTopic');
-        $this->SetReceiveDataFilter('.*mqttsync/' . $group . '.*');
+        if ($group === '') {
+            $this->SetReceiveDataFilter('^$'); // No filter if group is empty
+        } else {
+            $this->SetReceiveDataFilter('.*mqttsync/' . preg_quote($group, '/') . '.*'); // Filter for group topic
+        }
     }
 
     // Handles incoming MQTT data
@@ -29,18 +33,16 @@ class MQTTSyncServer extends IPSModule
     {
         $this->SendDebug('ReceiveData', $JSONString, 0);
         $data = json_decode($JSONString);
-        if (!isset($data->Topic) || !isset($data->Payload)) {
+        if (!is_object($data) || !isset($data->Topic) || !isset($data->Payload)) {
             $this->SendDebug('ReceiveData', 'Invalid data structure', 0);
             return;
         }
-        // Example: handle incoming payload (extend as needed)
         $payload = json_decode($data->Payload, true);
-        if (is_array($payload)) {
-            // Example: log received values
-            foreach ($payload as $key => $value) {
-                $this->SendDebug('Payload', $key . ': ' . print_r($value, true), 0);
-            }
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $this->SendDebug('ReceiveData', 'Invalid payload JSON', 0);
+            return;
         }
+        // Add your custom processing here if needed
     }
 
     // Helper to send MQTT messages via parent

@@ -1,17 +1,15 @@
 {
     "id": "{11111111-2222-3333-4444-555555555555}",
-    "name": "MQTTSyncClientDevice-Custom",
+    "name": "MQTTSyncClientDevice",
     "type": 3,
     "vendor": "saeed sohbatloo",
     "aliases": [
-        "MQTT Sync Client Device Custom by saeed sohbatloo"
+        "MQTT Sync Client Device by saeed sohbatloo"
     ],
     "parentRequirements": [
         "{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}"
     ],
     "childRequirements": [],
-    "implemented": [
-        "{7F7632D9-FA40-4F38-8DEA-C83CD4325A32}"
-    ],
+    "implemented": [],
     "prefix": "MQTTSYNC"
 }
