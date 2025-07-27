@@ -1,38 +1,11 @@
 {
     "translations": {
         "de": {
-            "Group Topic": "Group Topic",
-            "MQTT Topic": "MQTT Topic",
-            "Location": "Standort",
-            "Area (m²)": "Fläche (m²)",
-            "Description": "Beschreibung",
-            "Installation Date": "Installationsdatum",
-            "Active": "Aktiv",
-            "Device Information": "Geräteinformationen",
-            "The MQTT group this device belongs to.": "Die MQTT-Gruppe, zu der dieses Gerät gehört.",
-            "Unique topic for this device.": "Eindeutiges Topic für dieses Gerät.",
-            "Physical location of the device.": "Physischer Standort des Geräts.",
-            "Area covered by the device in square meters.": "Vom Gerät abgedeckte Fläche in Quadratmetern.",
-            "Additional information about the device.": "Zusätzliche Informationen zum Gerät.",
-            "Date when the device was installed.": "Datum, an dem das Gerät installiert wurde.",
-            "Check if the device is currently active.": "Ankreuzen, wenn das Gerät derzeit aktiv ist."
-        },
-        "en": {
-            "Group Topic": "Group Topic",
-            "MQTT Topic": "MQTT Topic",
-            "Location": "Location",
-            "Area (m²)": "Area (m²)",
-            "Description": "Description",
-            "Installation Date": "Installation Date",
-            "Active": "Active",
-            "Device Information": "Device Information",
-            "The MQTT group this device belongs to.": "The MQTT group this device belongs to.",
-            "Unique topic for this device.": "Unique topic for this device.",
-            "Physical location of the device.": "Physical location of the device.",
-            "Area covered by the device in square meters.": "Area covered by the device in square meters.",
-            "Additional information about the device.": "Additional information about the device.",
-            "Date when the device was installed.": "Date when the device was installed.",
-            "Check if the device is currently active.": "Check if the device is currently active."
+            "State": "Status",
+            "Devices": "Geräte",
+            "Remote ObjectID": "Remote ObjektID",
+            "Remote Object Name": "Remote Objekt Name",
+            "Object Type": "Objekt Typ"
         }
     }
 }
