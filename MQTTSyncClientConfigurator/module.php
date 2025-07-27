@@ -9,42 +9,45 @@ class MQTTSyncClientConfigurator extends IPSModule
     public function Create()
     {
         parent::Create();
-        // Register properties for group topic and device list
-        $this->RegisterPropertyString('GroupTopic', ''); // Group topic for all devices
-        $this->RegisterPropertyString('Devices', '[]'); // JSON array of device configs
+        // Register group topic and devices list properties
+        $this->RegisterPropertyString('GroupTopic', ''); // MQTT group topic for devices
+        $this->RegisterPropertyString('Devices', '[]');  // JSON encoded array of devices configuration
     }
 
     // Called whenever properties are changed or instance is loaded
     public function ApplyChanges()
     {
         parent::ApplyChanges();
-        // Set up MQTT receive filter for this group
+        // Read group topic to set MQTT receive filter accordingly
         $group = $this->ReadPropertyString('GroupTopic');
+        // Set filter to only receive messages that match the group topic pattern
         $this->SetReceiveDataFilter('.*mqttsync/' . $group . '.*');
     }
 
     // Handles incoming MQTT data
-    public function ReceiveData($JSONString)
+    public function ReceiveData(string $JSONString)
     {
         $this->SendDebug('ReceiveData', $JSONString, 0);
         $data = json_decode($JSONString);
+        // Validate the received data structure
         if (!isset($data->Topic) || !isset($data->Payload)) {
             $this->SendDebug('ReceiveData', 'Invalid data structure', 0);
             return;
         }
-        // Example: handle incoming payload (extend as needed)
+        // Decode the payload JSON into array
         $payload = json_decode($data->Payload, true);
+        // If payload is an array, log all key-value pairs for debugging
         if (is_array($payload)) {
-            // Example: log received values
             foreach ($payload as $key => $value) {
                 $this->SendDebug('Payload', $key . ': ' . print_r($value, true), 0);
             }
         }
     }
 
-    // Example method to update device list (extend as needed)
+    // Updates the stored device list buffer with given array of devices
     protected function UpdateDeviceList(array $devices)
     {
+        // Store the devices JSON string in module buffer for later use
         $this->SetBuffer('Devices', json_encode($devices));
     }
 }
