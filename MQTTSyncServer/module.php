@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-// MQTTSyncServer: Handles MQTT server-side logic in IP-Symcon
 class MQTTSyncServer extends IPSModule
 {
     public function Create()
     {
         parent::Create();
-        $this->RegisterPropertyString('GroupTopic', '');
+        $this->RegisterPropertyString('GroupTopic', 'symcon/group');
         $this->RegisterPropertyBoolean('Retain', false);
         $this->RegisterPropertyString('Devices', '[]');
     }
@@ -16,11 +15,12 @@ class MQTTSyncServer extends IPSModule
     public function ApplyChanges()
     {
         parent::ApplyChanges();
+
         $group = $this->ReadPropertyString('GroupTopic');
         if ($group === '') {
             $this->SetReceiveDataFilter('^$');
         } else {
-            $this->SetReceiveDataFilter('.*mqttsync/' . preg_quote($group, '/') . '.*');
+            $this->SetReceiveDataFilter('.*' . preg_quote($group, '/') . '.*');
         }
     }
 
@@ -32,11 +32,14 @@ class MQTTSyncServer extends IPSModule
             $this->SendDebug('ReceiveData', 'Invalid data structure', 0);
             return;
         }
+
         $payload = json_decode($data->Payload, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             $this->SendDebug('ReceiveData', 'Invalid payload JSON', 0);
             return;
         }
+
+        // Optional: Handle received data here
     }
 
     protected function SendMQTT(string $topic, string $payload, bool $retain = false)
@@ -54,16 +57,19 @@ class MQTTSyncServer extends IPSModule
         $this->SendDataToParent($DataJSON);
     }
 
-    // ✅ desired form format
     public function sendConfigurationToClient()
     {
-        $this->SendDebug('sendConfigurationToClient', 'Configuration sending started', 0);
+        $this->SendDebug('sendConfigurationToClient', 'Start', 0);
 
         $devices = json_decode($this->ReadPropertyString('Devices'), true);
         $groupTopic = $this->ReadPropertyString('GroupTopic');
         $retain = $this->ReadPropertyBoolean('Retain');
 
         foreach ($devices as $device) {
+            if (!isset($device['MQTTTopic']) || !isset($device['ObjectID'])) {
+                continue;
+            }
+
             $payload = json_encode([
                 'name' => $device['Name'] ?? '',
                 'location' => $device['Location'] ?? '',
@@ -71,12 +77,52 @@ class MQTTSyncServer extends IPSModule
                 'description' => $device['Description'] ?? '',
                 'type' => $device['Type'] ?? 'sensor'
             ]);
-            $topic = $device['MQTTTopic'] ?? '';
-            if ($topic !== '') {
-                $this->SendMQTT($topic, $payload, $retain);
-            }
+
+            $this->SendMQTT($device['MQTTTopic'], $payload, $retain);
         }
 
-        $this->SendDebug('sendConfigurationToClient', 'Configuration sending finished', 0);
+        $this->SendDebug('sendConfigurationToClient', 'Done', 0);
+    }
+
+    public function sendProfilesToClient()
+    {
+        $this->SendDebug('sendProfilesToClient', 'Start', 0);
+        // For now, just send debug message. You can extend this to send variable profiles.
+        $this->SendDebug('sendProfilesToClient', 'Done', 0);
+    }
+
+    public function sendVariablesToClient()
+    {
+        $this->SendDebug('sendVariablesToClient', 'Start', 0);
+
+        $devices = json_decode($this->ReadPropertyString('Devices'), true);
+        $retain = $this->ReadPropertyBoolean('Retain');
+
+        foreach ($devices as $device) {
+            if (!isset($device['MQTTTopic']) || !isset($device['ObjectID'])) {
+                continue;
+            }
+
+            $objectId = (int)$device['ObjectID'];
+            if (!IPS_VariableExists($objectId)) {
+                continue;
+            }
+
+            $value = GetValue($objectId);
+            $valueJSON = json_encode($value);
+            $this->SendMQTT($device['MQTTTopic'], $valueJSON, $retain);
+        }
+
+        $this->SendDebug('sendVariablesToClient', 'Done', 0);
+    }
+
+    public function synchronizeData()
+    {
+        $this->SendDebug('synchronizeData', 'Start', 0);
+        // You can extend this to do a full sync of everything
+        $this->sendConfigurationToClient();
+        $this->sendProfilesToClient();
+        $this->sendVariablesToClient();
+        $this->SendDebug('synchronizeData', 'Done', 0);
     }
 }
