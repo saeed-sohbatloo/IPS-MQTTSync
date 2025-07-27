@@ -1,15 +1,18 @@
 {
-    "id": "{11111111-2222-3333-4444-555555555555}",
-    "name": "MQTTSyncClientDevice",
-    "type": 3,
-    "vendor": "saeed sohbatloo",
-    "aliases": [
-        "MQTT Sync Client Device by saeed sohbatloo"
-    ],
-    "parentRequirements": [
-        "{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}"
-    ],
-    "childRequirements": [],
-    "implemented": [],
-    "prefix": "MQTTSYNC"
+  "id": "{11111111-2222-3333-4444-555555555555}",
+  "name": "MQTTSyncClientDevice",
+  "type": 3,
+  "vendor": "saeed sohbatloo",
+  "aliases": [
+    "MQTT Sync Client Device by saeed sohbatloo"
+  ],
+  "parentRequirements": [
+    {
+      "moduleID": "cb2ce93c3a3f2860e0bf",
+      "interface": "IMQTT"
+    }
+  ],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "MQTTSYNC"
 }
