@@ -1,10 +1,10 @@
 {
-    "id": "{F6B7EB9F-7624-1026-44C1-9AF4059C26ED}",
-    "name": "MQTTSyncClientDevice",
+    "id": "{11111111-2222-3333-4444-555555555555}",
+    "name": "MQTTSyncClientDevice-Custom",
     "type": 3,
     "vendor": "",
     "aliases": [
-        "MQTT Sync Client Device"
+        "MQTT Sync Client Device Custom"
     ],
     "parentRequirements": [
         "{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}"
