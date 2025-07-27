@@ -2,7 +2,7 @@
     "id": "{BBBBBBBB-CCCC-DDDD-EEEE-FFFFFFFFFFFF}",
     "name": "MQTTSyncServer-Custom",
     "type": 3,
-    "vendor": "saeed sohbatloo",
+    "vendor": "Saeed Sohbatloo",
     "aliases": [
         "MQTT Sync Server Custom by saeed sohbatloo"
     ],
@@ -13,5 +13,22 @@
     "implemented": [
         "{7F7632D9-FA40-4F38-8DEA-C83CD4325A32}"
     ],
-    "prefix": "MQTTSYNC"
+    "prefix": "MQTTSYNC",
+    "modules": [
+        {
+            "id": "{CCCCCCCC-DDDD-EEEE-FFFF-111111111111}",
+            "name": "MQTTSyncServer",
+            "type": 3,
+            "class": "MQTTSyncServer",
+            "aliases": ["MQTT Sync Server"],
+            "parentRequirements": [
+                "{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}"
+            ],
+            "childRequirements": [],
+            "implemented": [
+                "{7F7632D9-FA40-4F38-8DEA-C83CD4325A32}"
+            ],
+            "prefix": "MQTTSYNC"
+        }
+    ]
 }
