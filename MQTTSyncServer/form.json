@@ -5,15 +5,15 @@
     "items": [
       {
         "type": "ValidationTextBox",
-        "name": "MQTTTopic",
-        "caption": "MQTT Topic",
-        "default": "symcon/stm",
+        "name": "GroupTopic",
+        "caption": "MQTT Group Topic",
+        "default": "",
         "required": true
       },
       {
         "type": "CheckBox",
         "name": "Retain",
-        "caption": "Retain",
+        "caption": "Retain Messages",
         "default": false
       }
     ]
