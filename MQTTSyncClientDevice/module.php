@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
+// MQTTSyncClientDevice: Represents a single MQTT-enabled device in IP-Symcon
 class MQTTSyncClientDevice extends IPSModule
 {
     public function Create()
     {
         parent::Create();
 
-        // Properties قابل تنظیم توسط کاربر
+        // Base device info
         $this->RegisterPropertyString('MQTTTopic', '');
         $this->RegisterPropertyString('GroupTopic', '');
         $this->RegisterPropertyString('Location', '');
@@ -16,29 +17,24 @@ class MQTTSyncClientDevice extends IPSModule
         $this->RegisterPropertyString('Description', '');
         $this->RegisterPropertyString('InstallationDate', '');
         $this->RegisterPropertyBoolean('IsActive', true);
-        $this->RegisterPropertyInteger('SendInterval', 10);  // زمان ارسال به ثانیه
 
-        // تایمر ارسال اطلاعات
-        $this->RegisterTimer('SendInfoTimer', 0, 'MQTTSYNC_SendDeviceInfoMQTT($_IPS["TARGET"]);');
+        // Variable list to monitor
+        $this->RegisterPropertyString('MonitoredVariables', '[]');
+
+        // Timer for sending
+        $this->RegisterTimer('SendDeviceDataTimer', 0, 'MQTTSYNC_SendDeviceInfoMQTT($InstanceID);');
     }
 
     public function ApplyChanges()
     {
         parent::ApplyChanges();
 
-        // فیلتر داده‌های ورودی
         $group = $this->ReadPropertyString('GroupTopic');
         $topic = $this->ReadPropertyString('MQTTTopic');
-        $this->SetReceiveDataFilter('.*mqttsync/' . preg_quote($group, '/') . '/' . preg_quote($topic, '/') . '.*');
+        $this->SetReceiveDataFilter('.*mqttsync/' . $group . '/' . $topic . '.*');
 
-        // فعال یا غیرفعال کردن تایمر
-        if ($this->ReadPropertyBoolean('IsActive')) {
-            $interval = $this->ReadPropertyInteger('SendInterval');
-            $interval = max(1, $interval); // حداقل ۱ ثانیه
-            $this->SetTimerInterval('SendInfoTimer', $interval * 1000);
-        } else {
-            $this->SetTimerInterval('SendInfoTimer', 0);
-        }
+        // Set timer interval to 10 seconds
+        $this->SetTimerInterval('SendDeviceDataTimer', 10000);
     }
 
     public function ReceiveData($JSONString)
@@ -70,13 +66,26 @@ class MQTTSyncClientDevice extends IPSModule
             'IsActive' => $this->ReadPropertyBoolean('IsActive')
         ];
 
+        // Add selected variables to payload
+        $variables = json_decode($this->ReadPropertyString('MonitoredVariables'), true);
+        $values = [];
+        if (is_array($variables)) {
+            foreach ($variables as $entry) {
+                if (isset($entry['VariableID']) && IPS_VariableExists($entry['VariableID'])) {
+                    $values[IPS_GetName($entry['VariableID'])] = GetValue($entry['VariableID']);
+                }
+            }
+        }
+
+        $payload['Values'] = $values;
+
         $topic = 'mqttsync/' . $payload['GroupTopic'] . '/' . $payload['MQTTTopic'] . '/info';
         $this->SendMQTT($topic, json_encode($payload));
     }
 
     protected function SendMQTT(string $topic, string $payload, bool $retain = false)
     {
-        $data = [
+        $Data = [
             'DataID' => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
             'PacketType' => 3,
             'QualityOfService' => 0,
@@ -84,8 +93,9 @@ class MQTTSyncClientDevice extends IPSModule
             'Topic' => $topic,
             'Payload' => $payload
         ];
-        $json = json_encode($data);
-        $this->SendDebug('SendMQTT', $json, 0);
-        $this->SendDataToParent($json);
+
+        $DataJSON = json_encode($Data);
+        $this->SendDebug('SendMQTT', $DataJSON, 0);
+        $this->SendDataToParent($DataJSON);
     }
 }
