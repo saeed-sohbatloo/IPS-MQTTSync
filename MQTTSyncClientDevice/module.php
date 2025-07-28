@@ -9,7 +9,7 @@ class MQTTSyncClientDevice extends IPSModule
     {
         parent::Create();
 
-        // Base device info
+        // Device Properties
         $this->RegisterPropertyString('MQTTTopic', '');
         $this->RegisterPropertyString('GroupTopic', '');
         $this->RegisterPropertyString('Location', '');
@@ -18,23 +18,26 @@ class MQTTSyncClientDevice extends IPSModule
         $this->RegisterPropertyString('InstallationDate', '');
         $this->RegisterPropertyBoolean('IsActive', true);
 
-        // Variable list to monitor
+        // Monitoring
         $this->RegisterPropertyString('MonitoredVariables', '[]');
+        $this->RegisterPropertyInteger('UpdateInterval', 10);
 
-        // Timer for sending
-        $this->RegisterTimer('SendDeviceDataTimer', 0, 'MQTTSYNC_SendDeviceInfoMQTT($InstanceID);');
+        // Timer
+        $this->RegisterTimer('SendMQTTTimer', 0, 'MQTTSYNC_SendMonitoredData($_IPS["TARGET"]);');
     }
 
     public function ApplyChanges()
     {
         parent::ApplyChanges();
 
+        // MQTT Filter
         $group = $this->ReadPropertyString('GroupTopic');
         $topic = $this->ReadPropertyString('MQTTTopic');
         $this->SetReceiveDataFilter('.*mqttsync/' . $group . '/' . $topic . '.*');
 
-        // Set timer interval to 10 seconds
-        $this->SetTimerInterval('SendDeviceDataTimer', 10000);
+        // Timer einstellen
+        $interval = $this->ReadPropertyInteger('UpdateInterval');
+        $this->SetTimerInterval('SendMQTTTimer', $interval * 1000);
     }
 
     public function ReceiveData($JSONString)
@@ -45,7 +48,6 @@ class MQTTSyncClientDevice extends IPSModule
             $this->SendDebug('ReceiveData', 'Invalid data structure', 0);
             return;
         }
-
         $payload = json_decode($data->Payload, true);
         if (is_array($payload)) {
             foreach ($payload as $key => $value) {
@@ -54,7 +56,33 @@ class MQTTSyncClientDevice extends IPSModule
         }
     }
 
-    public function SendDeviceInfoMQTT()
+    public function SendMonitoredData()
+    {
+        $variables = json_decode($this->ReadPropertyString('MonitoredVariables'), true);
+        if (!is_array($variables)) {
+            $this->SendDebug('MonitoredVariables', 'Invalid variable list', 0);
+            return;
+        }
+
+        $values = [];
+        foreach ($variables as $var) {
+            if (!isset($var['VariableID'])) {
+                continue;
+            }
+            $varID = (int)$var['VariableID'];
+            if (!IPS_VariableExists($varID)) {
+                continue;
+            }
+            $values[IPS_GetName($varID)] = GetValue($varID);
+        }
+
+        if (!empty($values)) {
+            $topic = 'mqttsync/' . $this->ReadPropertyString('GroupTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '/values';
+            $this->SendMQTT($topic, json_encode($values));
+        }
+    }
+
+    protected function SendDeviceInfoMQTT()
     {
         $payload = [
             'MQTTTopic' => $this->ReadPropertyString('MQTTTopic'),
@@ -65,20 +93,6 @@ class MQTTSyncClientDevice extends IPSModule
             'InstallationDate' => $this->ReadPropertyString('InstallationDate'),
             'IsActive' => $this->ReadPropertyBoolean('IsActive')
         ];
-
-        // Add selected variables to payload
-        $variables = json_decode($this->ReadPropertyString('MonitoredVariables'), true);
-        $values = [];
-        if (is_array($variables)) {
-            foreach ($variables as $entry) {
-                if (isset($entry['VariableID']) && IPS_VariableExists($entry['VariableID'])) {
-                    $values[IPS_GetName($entry['VariableID'])] = GetValue($entry['VariableID']);
-                }
-            }
-        }
-
-        $payload['Values'] = $values;
-
         $topic = 'mqttsync/' . $payload['GroupTopic'] . '/' . $payload['MQTTTopic'] . '/info';
         $this->SendMQTT($topic, json_encode($payload));
     }
@@ -93,7 +107,6 @@ class MQTTSyncClientDevice extends IPSModule
             'Topic' => $topic,
             'Payload' => $payload
         ];
-
         $DataJSON = json_encode($Data);
         $this->SendDebug('SendMQTT', $DataJSON, 0);
         $this->SendDataToParent($DataJSON);
