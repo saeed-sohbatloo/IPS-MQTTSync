@@ -57,30 +57,54 @@ class MQTTSyncClientDevice extends IPSModule
     }
 
     public function SendMonitoredData()
-    {
-        $variables = json_decode($this->ReadPropertyString('MonitoredVariables'), true);
-        if (!is_array($variables)) {
-            $this->SendDebug('MonitoredVariables', 'Invalid variable list', 0);
-            return;
-        }
-
-        $values = [];
-        foreach ($variables as $var) {
-            if (!isset($var['VariableID'])) {
-                continue;
-            }
-            $varID = (int)$var['VariableID'];
-            if (!IPS_VariableExists($varID)) {
-                continue;
-            }
-            $values[IPS_GetName($varID)] = GetValue($varID);
-        }
-
-        if (!empty($values)) {
-            $topic = 'mqttsync/' . $this->ReadPropertyString('GroupTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '/values';
-            $this->SendMQTT($topic, json_encode($values));
-        }
+{
+    $variables = json_decode($this->ReadPropertyString('MonitoredVariables'), true);
+    if (!is_array($variables)) {
+        $this->SendDebug('MonitoredVariables', 'Invalid variable list', 0);
+        return;
     }
+
+    $values = [];
+    foreach ($variables as $var) {
+        if (!isset($var['VariableID'])) {
+            continue;
+        }
+
+        $varID = (int)$var['VariableID'];
+        if (!IPS_VariableExists($varID)) {
+            continue;
+        }
+
+        $value = GetValue($varID);
+
+        // Handle decimals (rounding)
+        if (isset($var['Decimals']) && is_numeric($var['Decimals'])) {
+            $decimals = (int)$var['Decimals'];
+            if (is_float($value) || is_double($value)) {
+                $value = round($value, $decimals);
+            }
+        }
+
+        $entry = [
+            'value' => $value,
+            'unit' => isset($var['Unit']) ? $var['Unit'] : '',
+            'timestamp' => time()
+        ];
+
+        // Use DisplayName if set, otherwise use variable name
+        $key = isset($var['DisplayName']) && $var['DisplayName'] !== ''
+            ? $var['DisplayName']
+            : IPS_GetName($varID);
+
+        $values[$key] = $entry;
+    }
+
+    if (!empty($values)) {
+        $topic = 'mqttsync/' . $this->ReadPropertyString('GroupTopic') . '/' . $this->ReadPropertyString('MQTTTopic') . '/values';
+        $this->SendMQTT($topic, json_encode($values));
+    }
+}
+
 
     protected function SendDeviceInfoMQTT()
     {
