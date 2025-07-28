@@ -71,10 +71,39 @@
             {
               "caption": "Variable",
               "name": "VariableID",
-              "width": "300px",
+              "width": "180px",
               "add": true,
               "edit": {
                 "type": "SelectVariable"
+              }
+            },
+            {
+              "caption": "Display Name",
+              "name": "DisplayName",
+              "width": "150px",
+              "add": true,
+              "edit": {
+                "type": "ValidationTextBox"
+              }
+            },
+            {
+              "caption": "Unit",
+              "name": "Unit",
+              "width": "100px",
+              "add": true,
+              "edit": {
+                "type": "ValidationTextBox"
+              }
+            },
+            {
+              "caption": "Decimals",
+              "name": "Decimals",
+              "width": "80px",
+              "add": true,
+              "edit": {
+                "type": "NumberSpinner",
+                "minimum": 0,
+                "maximum": 6
               }
             }
           ]
@@ -93,7 +122,7 @@
     },
     {
       "type": "Label",
-      "caption": "Dieses Modul ist für die nicht kommerzielle Nutzung kostenlos. Schenkungen als Unterstützung für den Autor werden hier akzeptiert."
+      "caption": "This module is free for non-commercial use. Donations to support the author are appreciated."
     }
   ],
   "actions": [],
