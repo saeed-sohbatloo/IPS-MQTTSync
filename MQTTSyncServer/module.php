@@ -28,15 +28,90 @@ class MQTTSyncServer extends IPSModule
     {
         $this->SendDebug('ReceiveData', $JSONString, 0);
         $data = json_decode($JSONString);
-        if (!is_object($data) || !isset($data->Topic) || !isset($data->Payload)) {
-            $this->SendDebug('ReceiveData', 'Invalid data structure', 0);
+        if (!isset($data->Topic) || !isset($data->Payload)) {
+            $this->SendDebug('ReceiveData', 'Invalid structure', 0);
             return;
         }
 
-        $payload = json_decode($data->Payload, true);
+        $topic = $data->Topic;
+        $payloadRaw = $data->Payload;
+        $payload = json_decode($payloadRaw, true);
+
         if (json_last_error() !== JSON_ERROR_NONE) {
-            $this->SendDebug('ReceiveData', 'Invalid payload JSON', 0);
+            $this->SendDebug('Payload Error', json_last_error_msg(), 0);
             return;
+        }
+
+        $this->SendDebug('Topic', $topic, 0);
+        $this->SendDebug('Payload', print_r($payload, true), 0);
+
+        $groupTopic = $this->ReadPropertyString('GroupTopic');
+        $devices = json_decode($this->ReadPropertyString('Devices'), true);
+
+        foreach ($devices as $device) {
+            $clientTopic = $device['MQTTTopic'] ?? '';
+            $expectedPrefix = 'mqttsync/' . $groupTopic . '/' . $clientTopic;
+
+            // Check if the message is for this client
+            if (!str_starts_with($topic, $expectedPrefix)) {
+                continue;
+            }
+
+            $suffix = substr($topic, strlen($expectedPrefix));
+
+            // Handle /info message → store metadata in buffer
+            if ($suffix === '/info') {
+                if (isset($payload['Location'])) {
+                    $this->SetBuffer($clientTopic . '_Location', $payload['Location']);
+                }
+                if (isset($payload['Description'])) {
+                    $this->SetBuffer($clientTopic . '_Description', $payload['Description']);
+                }
+                if (isset($payload['InstallationDate'])) {
+                    $this->SetBuffer($clientTopic . '_InstallDate', $payload['InstallationDate']);
+                }
+                if (isset($payload['IsActive'])) {
+                    $this->SetBuffer($clientTopic . '_IsActive', (string)$payload['IsActive']);
+                }
+                $this->SendDebug('Client Info Stored', $clientTopic, 0);
+            }
+
+            // Handle /values message → update variables or create if missing
+            elseif ($suffix === '/values') {
+                foreach ($payload as $name => $entry) {
+                    if (!isset($entry['id']) || !isset($entry['value'])) {
+                        continue;
+                    }
+
+                    $varIdent = $clientTopic . '_' . preg_replace('/[^a-zA-Z0-9_]/', '_', $name);
+                    $value = $entry['value'];
+
+                    // Try to find existing variable
+                    $varID = @IPS_GetObjectIDByIdent($varIdent, $this->InstanceID);
+                    if ($varID === false) {
+                        // Auto-detect type and create variable
+                        if (is_bool($value)) {
+                            $this->RegisterVariableBoolean($varIdent, $name, '', -1);
+                        } elseif (is_int($value)) {
+                            $this->RegisterVariableInteger($varIdent, $name, '', -1);
+                        } elseif (is_float($value)) {
+                            $this->RegisterVariableFloat($varIdent, $name, '', -1);
+                        } else {
+                            $this->RegisterVariableString($varIdent, $name, '', -1);
+                        }
+                        $varID = $this->GetIDForIdent($varIdent);
+                    }
+
+                    // Set the value
+                    SetValue($varID, $value);
+                    $this->SendDebug("Updated [$name]", "Value: $value", 0);
+                }
+            }
+
+            // Unknown suffix
+            else {
+                $this->SendDebug('Unknown SubTopic', $suffix, 0);
+            }
         }
     }
 
@@ -84,7 +159,7 @@ class MQTTSyncServer extends IPSModule
     public function sendProfilesToClient()
     {
         $this->SendDebug('sendProfilesToClient', 'Start', 0);
-        // Implement profile sending logic if needed
+        // Add logic if needed in future
         $this->SendDebug('sendProfilesToClient', 'Done', 0);
     }
 
