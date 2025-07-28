@@ -2,24 +2,100 @@
   "elements": [
     {
       "type": "ExpansionPanel",
-      "caption": "Device Settings",
+      "caption": "Device Information",
       "items": [
-        { "type": "ValidationTextBox", "name": "MQTTTopic", "caption": "MQTT Topic" },
-        { "type": "ValidationTextBox", "name": "GroupTopic", "caption": "Group Topic" },
-        { "type": "ValidationTextBox", "name": "Location", "caption": "Location" },
-        { "type": "NumberSpinner", "name": "Area", "caption": "Area (m²)", "minimum": 0 },
-        { "type": "ValidationTextBox", "name": "Description", "caption": "Description" },
-        { "type": "ValidationTextBox", "name": "InstallationDate", "caption": "Installation Date" },
-        { "type": "CheckBox", "name": "IsActive", "caption": "Active" },
-        { "type": "NumberSpinner", "name": "SendInterval", "caption": "Send Interval (sec)", "minimum": 1 }
+        {
+          "type": "ValidationTextBox",
+          "name": "GroupTopic",
+          "caption": "MQTT Group Topic",
+          "placeholder": "Enter group topic...",
+          "tooltip": "The MQTT group this device belongs to."
+        },
+        {
+          "type": "ValidationTextBox",
+          "name": "MQTTTopic",
+          "caption": "MQTT Topic",
+          "placeholder": "Enter device topic...",
+          "tooltip": "Unique topic for this device."
+        },
+        {
+          "type": "ValidationTextBox",
+          "name": "Location",
+          "caption": "Location",
+          "placeholder": "e.g. Living Room",
+          "tooltip": "Physical location of the device."
+        },
+        {
+          "type": "NumberSpinner",
+          "name": "Area",
+          "caption": "Area (m²)",
+          "minimum": 0,
+          "maximum": 10000,
+          "step": 1,
+          "placeholder": "e.g. 25",
+          "tooltip": "Area covered by the device in square meters."
+        },
+        {
+          "type": "ValidationTextBox",
+          "name": "Description",
+          "caption": "Description",
+          "placeholder": "Add any notes or description...",
+          "tooltip": "Additional information about the device."
+        },
+        {
+          "type": "ValidationTextBox",
+          "name": "InstallationDate",
+          "caption": "Installation Date",
+          "placeholder": "YYYY-MM-DD",
+          "tooltip": "Enter date in the format YYYY-MM-DD"
+        },
+        {
+          "type": "CheckBox",
+          "name": "IsActive",
+          "caption": "Active",
+          "tooltip": "Check if the device is currently active."
+        }
       ]
+    },
+    {
+      "type": "ExpansionPanel",
+      "caption": "Signal Configuration",
+      "items": [
+        {
+          "type": "List",
+          "name": "MonitoredVariables",
+          "caption": "Monitored Variables",
+          "add": true,
+          "delete": true,
+          "columns": [
+            {
+              "caption": "Variable",
+              "name": "VariableID",
+              "width": "300px",
+              "add": true,
+              "edit": {
+                "type": "SelectVariable"
+              }
+            }
+          ]
+        },
+        {
+          "type": "NumberSpinner",
+          "name": "UpdateInterval",
+          "caption": "Update Interval (seconds)",
+          "minimum": 1,
+          "maximum": 3600,
+          "step": 1,
+          "default": 10,
+          "tooltip": "Time interval to send data over MQTT"
+        }
+      ]
+    },
+    {
+      "type": "Label",
+      "caption": "Dieses Modul ist für die nicht kommerzielle Nutzung kostenlos. Schenkungen als Unterstützung für den Autor werden hier akzeptiert."
     }
   ],
-  "actions": [
-    {
-      "type": "Button",
-      "label": "Send Now",
-      "onClick": "MQTTSYNC_SendDeviceInfoMQTT($id);"
-    }
-  ]
+  "actions": [],
+  "status": []
 }
