@@ -86,6 +86,7 @@ class MQTTSyncClientDevice extends IPSModule
         }
 
         $entry = [
+            'id' => $varID,
             'value' => $value,
             'unit' => isset($var['Unit']) ? $var['Unit'] : '',
             'timestamp' => time()
