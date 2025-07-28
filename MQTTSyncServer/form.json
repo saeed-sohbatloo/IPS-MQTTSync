@@ -68,8 +68,29 @@
               }
             },
             {
+              "caption": "Location",
+              "name": "Location",
+              "width": "120px",
+              "add": true,
+              "edit": { "type": "ValidationTextBox" }
+            },
+            {
+              "caption": "Description",
+              "name": "Description",
+              "width": "150px",
+              "add": true,
+              "edit": { "type": "ValidationTextBox" }
+            },
+            {
+              "caption": "Install Date",
+              "name": "InstallationDate",
+              "width": "120px",
+              "add": true,
+              "edit": { "type": "ValidationTextBox" }
+            },
+            {
               "caption": "Active",
-              "name": "Active",
+              "name": "IsActive",
               "width": "70px",
               "add": true,
               "edit": { "type": "CheckBox" }
