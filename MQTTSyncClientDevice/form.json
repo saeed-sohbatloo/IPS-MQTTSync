@@ -1,42 +1,25 @@
 {
   "elements": [
     {
-      "type": "ValidationTextBox",
-      "name": "GroupTopic",
-      "caption": "MQTT Group Topic"
-    },
-    {
-      "type": "ValidationTextBox",
-      "name": "MQTTTopic",
-      "caption": "MQTT Topic"
-    },
-    {
-      "type": "List",
-      "name": "VariablesToSend",
-      "caption": "Variables to Send",
-      "add": true,
-      "delete": true,
-      "columns": [
-        {
-          "caption": "Variable",
-          "name": "VariableID",
-          "width": "300px",
-          "add": true,
-          "edit": {
-            "type": "SelectVariable"
-          }
-        },
-        {
-          "caption": "MQTT Topic Suffix",
-          "name": "TopicSuffix",
-          "width": "200px",
-          "add": true,
-          "edit": {
-            "type": "ValidationTextBox"
-          }
-        }
+      "type": "ExpansionPanel",
+      "caption": "Device Settings",
+      "items": [
+        { "type": "ValidationTextBox", "name": "MQTTTopic", "caption": "MQTT Topic" },
+        { "type": "ValidationTextBox", "name": "GroupTopic", "caption": "Group Topic" },
+        { "type": "ValidationTextBox", "name": "Location", "caption": "Location" },
+        { "type": "NumberSpinner", "name": "Area", "caption": "Area (m²)", "minimum": 0 },
+        { "type": "ValidationTextBox", "name": "Description", "caption": "Description" },
+        { "type": "ValidationTextBox", "name": "InstallationDate", "caption": "Installation Date" },
+        { "type": "CheckBox", "name": "IsActive", "caption": "Active" },
+        { "type": "NumberSpinner", "name": "SendInterval", "caption": "Send Interval (sec)", "minimum": 1 }
       ]
     }
   ],
-  "actions": []
+  "actions": [
+    {
+      "type": "Button",
+      "label": "Send Now",
+      "onClick": "MQTTSYNC_SendDeviceInfoMQTT($id);"
+    }
+  ]
 }
